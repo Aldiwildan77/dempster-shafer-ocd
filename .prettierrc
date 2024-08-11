@@ -7,7 +7,7 @@
   "singleAttributePerLine": false,
   "bracketSameLine": false,
   "jsxBracketSameLine": false,
-  "jsxSingleQuote": true,
+  "jsxSingleQuote": false,
   "printWidth": 80,
   "proseWrap": "preserve",
   "quoteProps": "as-needed",
@@ -19,6 +19,5 @@
   "useTabs": false,
   "embeddedLanguageFormatting": "auto",
   "vueIndentScriptAndStyle": false,
-  "filepath": "/Users/ruangguru/Workspace/Other/dempster-shafer-ocd/app/login.tsx",
   "parser": "typescript"
 }
