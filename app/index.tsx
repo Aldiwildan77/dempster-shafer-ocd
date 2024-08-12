@@ -16,6 +16,11 @@ export default function App() {
       try {
         await Font.loadAsync(Entypo.font);
 
+        const uiManager: any = (global as any)?.nativeFabricUIManager
+          ? "Fabric"
+          : "Paper";
+        console.log(`Using ${uiManager}`);
+
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);

@@ -8,7 +8,7 @@
     "url": "https://aldiwildan.me"
   },
   "scripts": {
-    "start": "expo start",
+    "start": "expo start -c",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -29,6 +29,7 @@
     "@react-navigation/native": "^6.0.2",
     "@ui-kitten/components": "^5.3.1",
     "@ui-kitten/eva-icons": "^5.3.1",
+    "burnt": "^0.12.2",
     "css-select": "^5.1.0",
     "css-tree": "^2.3.1",
     "expo": "~51.0.26",
@@ -43,7 +44,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "react": "18.2.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "18.2.0",
     "react-hook-form": "^7.52.2",
     "react-native": "0.74.5",
     "react-native-gesture-handler": "~2.16.1",
@@ -52,7 +53,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-web": "^0.19.12",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

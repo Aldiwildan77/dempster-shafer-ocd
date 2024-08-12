@@ -1,6 +1,9 @@
+import { EmailRegex } from "@/constants/Email";
+import { ReactNativeFirebase } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
 import { Button, Input, Text } from "@ui-kitten/components";
-import { Link } from "expo-router";
+import * as Burnt from "burnt";
+import { Link, router } from "expo-router";
 import { Fragment } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { SafeAreaView, StyleSheet, View } from "react-native";
@@ -11,7 +14,11 @@ type LoginFormData = {
 };
 
 export default function LoginScreen() {
-  const { control, handleSubmit } = useForm<LoginFormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
     defaultValues: {
       email: "",
       password: "",
@@ -19,22 +26,43 @@ export default function LoginScreen() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    await auth()
-      .signInWithEmailAndPassword(data.email, data.password)
-      .then(() => {
-        console.log("User account created & signed in!");
-      })
-      .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          console.log("That email address is already in use!");
-        }
+    try {
+      const authResponse = await auth().signInWithEmailAndPassword(
+        data.email,
+        data.password
+      );
 
-        if (error.code === "auth/invalid-email") {
-          console.log("That email address is invalid!");
-        }
+      const user = authResponse.user;
+      console.log("User signed in: ", user);
+      // TODO: store user data
 
-        console.error(error);
+      router.push("/(tabs)home");
+    } catch (error: any) {
+      const firebaseError = error as ReactNativeFirebase.NativeFirebaseError;
+
+      const errorMap = new Map<string, string>([
+        ["auth/invalid-credential", "Email or password is incorrect."],
+        ["auth/user-disabled", "User account is disabled."],
+        ["auth/invalid-email", "Invalid email address."],
+        ["auth/user-not-found", "User not found."],
+        ["auth/wrong-password", "Invalid password."],
+        ["auth/too-many-requests", "Too many requests. Try again later."],
+      ]);
+
+      Burnt.toast({
+        title: errorMap.get(firebaseError.code) ?? firebaseError.message,
+        duration: 3000,
+        from: "bottom",
+        preset: "error",
+        shouldDismissByDrag: true,
+        layout: {
+          iconSize: {
+            height: 24,
+            width: 24,
+          },
+        },
       });
+    }
   };
 
   return (
@@ -43,35 +71,67 @@ export default function LoginScreen() {
         <Text category="h5" style={styles.title}>
           Welcome back.
         </Text>
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Email"
-              keyboardType="email-address"
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
+        <View style={{ gap: 16 }}>
+          <View style={{ gap: 8 }}>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Fragment>
+                  <Input
+                    placeholder="Email"
+                    keyboardType="email-address"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    size="large"
+                  />
+                  {errors.email && (
+                    <Text style={styles.input_error}>
+                      {errors.email?.message}
+                    </Text>
+                  )}
+                </Fragment>
+              )}
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: EmailRegex,
+                  message: "Invalid email address",
+                },
+              }}
             />
-          )}
-          rules={{ required: "Email is required" }}
-        />
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Password"
-              secureTextEntry
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Fragment>
+                  <Input
+                    placeholder="Password"
+                    secureTextEntry
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    size="large"
+                  />
+                  {errors.password && (
+                    <Text style={styles.input_error}>
+                      {errors.password?.message}
+                    </Text>
+                  )}
+                </Fragment>
+              )}
+              rules={{
+                required: "Password is required",
+                minLength: {
+                  value: 6,
+                  message: "Password must be at least 6 characters",
+                },
+              }}
             />
-          )}
-          rules={{ required: "Password is required", maxLength: 20 }}
-        />
-        <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+          </View>
+          <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -99,5 +159,9 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
+  },
+  input_error: {
+    color: "red",
+    fontSize: 12,
   },
 });
