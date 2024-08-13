@@ -1,10 +1,11 @@
 import { useUserStore } from "@/hooks/useUser";
 import Entypo from "@expo/vector-icons/Entypo";
+import { Spinner } from "@ui-kitten/components";
 import * as Font from "expo-font";
 import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -42,9 +43,10 @@ export default function App() {
       // we hide the splash screen once we know the root view has already
       // performed layout.
       await SplashScreen.hideAsync();
-      console.log("user in root layout", user);
       if (!user) {
         router.push("/auth/login");
+      } else {
+        router.push("/(tabs)/");
       }
     }
   }, [appIsReady, user]);
@@ -58,8 +60,7 @@ export default function App() {
       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
       onLayout={onLayoutRootView}
     >
-      <Text>OCD Test App! 👋</Text>
-      <Entypo name="rocket" size={30} />
+      <Spinner />
     </View>
   );
 }
