@@ -1,3 +1,4 @@
+import { useUserStore } from "@/hooks/useUser";
 import Entypo from "@expo/vector-icons/Entypo";
 import * as Font from "expo-font";
 import { router } from "expo-router";
@@ -10,6 +11,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     async function prepare() {
@@ -40,10 +42,12 @@ export default function App() {
       // we hide the splash screen once we know the root view has already
       // performed layout.
       await SplashScreen.hideAsync();
-
-      router.push("/auth/login");
+      console.log("user in root layout", user);
+      if (!user) {
+        router.push("/auth/login");
+      }
     }
-  }, [appIsReady]);
+  }, [appIsReady, user]);
 
   if (!appIsReady) {
     return null;

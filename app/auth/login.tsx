@@ -1,10 +1,11 @@
 import { EmailRegex } from "@/constants/Email";
+import { useUserStore } from "@/hooks/useUser";
 import { ReactNativeFirebase } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
-import { Button, Input, Text } from "@ui-kitten/components";
+import { Button, Input, Spinner, Text } from "@ui-kitten/components";
 import * as Burnt from "burnt";
 import { Link, router } from "expo-router";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 
@@ -14,6 +15,7 @@ type LoginFormData = {
 };
 
 export default function LoginScreen() {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     control,
     handleSubmit,
@@ -25,7 +27,10 @@ export default function LoginScreen() {
     },
   });
 
+  const setUser = useUserStore((state) => state.setUser);
+
   const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
       const authResponse = await auth().signInWithEmailAndPassword(
         data.email,
@@ -34,9 +39,9 @@ export default function LoginScreen() {
 
       const user = authResponse.user;
       console.log("User signed in: ", user);
-      // TODO: store user data
+      setUser(user);
 
-      router.push("/(tabs)home");
+      router.push({ pathname: "/" });
     } catch (error: any) {
       const firebaseError = error as ReactNativeFirebase.NativeFirebaseError;
 
@@ -63,6 +68,7 @@ export default function LoginScreen() {
         },
       });
     }
+    setIsLoading(false);
   };
 
   return (
@@ -130,7 +136,9 @@ export default function LoginScreen() {
               }}
             />
           </View>
-          <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+          <Button onPress={handleSubmit(onSubmit)} disabled={isLoading}>
+            {isLoading ? <Spinner /> : "Login"}
+          </Button>
         </View>
         <View
           style={{
