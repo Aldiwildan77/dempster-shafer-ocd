@@ -1,7 +1,7 @@
-import { StateStorage, persist } from "zustand/middleware";
-import { create } from "zustand";
-import { MMKV } from "react-native-mmkv";
 import type { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { MMKV } from "react-native-mmkv";
+import { create } from "zustand";
+import { StateStorage, persist } from "zustand/middleware";
 
 const storage = new MMKV();
 
@@ -16,11 +16,6 @@ const zustandStorage: StateStorage = {
   removeItem: (name) => {
     return storage.delete(name);
   },
-};
-
-type User = {
-  name: string;
-  email: string;
 };
 
 type UserStore = {

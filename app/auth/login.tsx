@@ -3,7 +3,7 @@ import { useUserStore } from "@/hooks/useUser";
 import { ReactNativeFirebase } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
 import { Button, Input, Spinner, Text } from "@ui-kitten/components";
-import * as Burnt from "burnt";
+import { toast } from "burnt";
 import { Link, router } from "expo-router";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -31,6 +31,7 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+
     try {
       const authResponse = await auth().signInWithEmailAndPassword(
         data.email,
@@ -54,7 +55,7 @@ export default function LoginScreen() {
         ["auth/too-many-requests", "Too many requests. Try again later."],
       ]);
 
-      Burnt.toast({
+      toast({
         title: errorMap.get(firebaseError.code) ?? firebaseError.message,
         duration: 3000,
         from: "bottom",
@@ -67,8 +68,9 @@ export default function LoginScreen() {
           },
         },
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -77,68 +79,78 @@ export default function LoginScreen() {
         <Text category="h5" style={styles.title}>
           Welcome back.
         </Text>
-        <View style={{ gap: 16 }}>
-          <View style={{ gap: 8 }}>
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Fragment>
-                  <Input
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    size="large"
-                  />
-                  {errors.email && (
-                    <Text style={styles.input_error}>
-                      {errors.email?.message}
-                    </Text>
-                  )}
-                </Fragment>
-              )}
-              rules={{
-                required: "Email is required",
-                pattern: {
-                  value: EmailRegex,
-                  message: "Invalid email address",
-                },
-              }}
-            />
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Fragment>
-                  <Input
-                    placeholder="Password"
-                    secureTextEntry
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    size="large"
-                  />
-                  {errors.password && (
-                    <Text style={styles.input_error}>
-                      {errors.password?.message}
-                    </Text>
-                  )}
-                </Fragment>
-              )}
-              rules={{
-                required: "Password is required",
-                minLength: {
-                  value: 6,
-                  message: "Password must be at least 6 characters",
-                },
-              }}
-            />
+        <View style={{ padding: 8, gap: 8 }}>
+          <View style={{ gap: 16 }}>
+            <View style={{ gap: 8 }}>
+              <Controller
+                control={control}
+                name="email"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState,
+                }) => (
+                  <Fragment>
+                    <Input
+                      placeholder="Email"
+                      keyboardType="email-address"
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      size="large"
+                      status={fieldState.invalid ? "danger" : "basic"}
+                    />
+                    {errors.email && (
+                      <Text style={styles.input_error}>
+                        {errors.email?.message}
+                      </Text>
+                    )}
+                  </Fragment>
+                )}
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: EmailRegex,
+                    message: "Invalid email address",
+                  },
+                }}
+              />
+              <Controller
+                control={control}
+                name="password"
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState,
+                }) => (
+                  <Fragment>
+                    <Input
+                      placeholder="Password"
+                      secureTextEntry
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      size="large"
+                      status={fieldState.invalid ? "danger" : "basic"}
+                    />
+                    {errors.password && (
+                      <Text style={styles.input_error}>
+                        {errors.password?.message}
+                      </Text>
+                    )}
+                  </Fragment>
+                )}
+                rules={{
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters",
+                  },
+                }}
+              />
+            </View>
+            <Button onPress={handleSubmit(onSubmit)} disabled={isLoading}>
+              {isLoading ? <Spinner /> : "Login"}
+            </Button>
           </View>
-          <Button onPress={handleSubmit(onSubmit)} disabled={isLoading}>
-            {isLoading ? <Spinner /> : "Login"}
-          </Button>
         </View>
         <View
           style={{
