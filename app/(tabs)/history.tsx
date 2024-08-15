@@ -2,7 +2,7 @@ import { TopNavigation } from "@ui-kitten/components";
 import { Fragment } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-export default function History() {
+export default function HistoryTabScreen() {
   return (
     <Fragment>
       <TopNavigation title="History" />

@@ -25,7 +25,7 @@ const LogoutIcon = (props: IconProps): IconElement => (
   <Icon {...props} name="log-out" />
 );
 
-export default function Profile() {
+export default function ProfileTabScreen() {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const resetUser = useUserStore((state) => state.reset);
 

@@ -2,7 +2,7 @@ import { Button, Card, Text, TopNavigation } from "@ui-kitten/components";
 import { Fragment } from "react";
 import { StyleSheet, View } from "react-native";
 
-export default function Index() {
+export default function IndexTabScreen() {
   const TakeTestHeader = () => {
     return (
       <View style={{ gap: 8 }}>
