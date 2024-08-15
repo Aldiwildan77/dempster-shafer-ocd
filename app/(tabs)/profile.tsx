@@ -69,11 +69,7 @@ export default function ProfileTabScreen() {
 
   return (
     <Fragment>
-      <TopNavigation
-        alignment="center"
-        title="Profile"
-        accessoryRight={renderRightActions}
-      />
+      <TopNavigation title="Profile" accessoryRight={renderRightActions} />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Profile page</Text>
       </View>

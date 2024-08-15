@@ -1,6 +1,14 @@
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  NavigationHelpers,
+  ParamListBase,
+  TabNavigationState,
+} from "@react-navigation/native";
 
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationEventMap,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import {
   BottomNavigation,
   BottomNavigationTab,
@@ -39,7 +47,13 @@ export default function Layout() {
     </Navigator>
   );
 
-  const BottomTabBar = ({ navigation, state }) => (
+  const BottomTabBar = ({
+    navigation,
+    state,
+  }: {
+    navigation: NavigationHelpers<ParamListBase, BottomTabNavigationEventMap>;
+    state: TabNavigationState<ParamListBase>;
+  }) => (
     <BottomNavigation
       selectedIndex={state.index}
       onSelect={(index) => navigation.navigate(state.routeNames[index])}
