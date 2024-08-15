@@ -1,27 +1,73 @@
+import { AnswerCollection } from "@/core/entity/answers";
+import { useUserStore } from "@/hooks/useUser";
+import firestore from "@react-native-firebase/firestore";
 import {
   Button,
   Icon,
   IconElement,
   IconProps,
-  List,
   ListItem,
   TopNavigation,
 } from "@ui-kitten/components";
-import { Fragment } from "react";
-import { StyleSheet, View } from "react-native";
+import { toast } from "burnt";
+import { useCallback, useEffect, useState } from "react";
+import {
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 interface IListHistory {
-  title: string;
-  description: string;
+  score: number;
+  predicate: string;
+  created_at: Date;
+  finished_at: Date;
 }
 
-const data = new Array(8).fill({
-  title: "Your OCD Test Result",
-  description: "TODO: Tanggal Here",
-});
-
 export default function HistoryTabScreen() {
-  // TODO: bind data from firestore
+  const [refreshing, setRefreshing] = useState(false);
+  const [history, setHistory] = useState<IListHistory[]>([]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchHistory();
+    setTimeout(() => setRefreshing(false), 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const user = useUserStore((state) => state.user);
+
+  const fetchHistory = async () => {
+    try {
+      const snapshot = await firestore()
+        .collection(AnswerCollection)
+        .where("user_id", "==", user?.uid)
+        .orderBy("created_at", "desc")
+        .get();
+      const data = snapshot.docs.map((doc) => doc.data());
+
+      const historyData = data.map((item) => ({
+        score: item.score,
+        predicate: item.predicate,
+        created_at: item.created_at.toDate(),
+        finished_at: item.finished_at.toDate(),
+      }));
+
+      setHistory(historyData);
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Failed to fetch history", preset: "error" });
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderItemAccessory = (): React.ReactElement => (
     <Button size="tiny">Check</Button>
@@ -39,24 +85,30 @@ export default function HistoryTabScreen() {
     index: number;
   }): React.ReactElement => (
     <ListItem
-      title={`${item.title} ${index + 1}`}
-      description={`${item.description} ${index + 1}`}
+      title={"Your OCD Test Result"}
+      description={`${item.score} - ${item.predicate}`}
       accessoryLeft={renderItemIcon}
       accessoryRight={renderItemAccessory}
     />
   );
 
   return (
-    <Fragment>
+    <SafeAreaView style={styles.container}>
       <TopNavigation title="History" />
-      <View style={styles.container}>
-        <List
+      <ScrollView
+        horizontal={false}
+        // TODO: i have concerns about this infinite scroll, need to check
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <FlatList
           style={styles.listContainer}
-          data={data}
+          data={history}
           renderItem={renderItem}
         />
-      </View>
-    </Fragment>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
