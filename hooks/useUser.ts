@@ -21,6 +21,7 @@ const zustandStorage: StateStorage = {
 type UserStore = {
   user?: FirebaseAuthTypes.User;
   setUser: (user: FirebaseAuthTypes.User) => void;
+  reset: () => void;
 };
 
 export const useUserStore = create<UserStore>()(
@@ -28,6 +29,7 @@ export const useUserStore = create<UserStore>()(
     (set) => ({
       user: undefined,
       setUser: (user) => set({ user }),
+      reset: () => set({ user: undefined }),
     }),
     {
       name: "user",

@@ -1,5 +1,6 @@
 import { useUserStore } from "@/hooks/useUser";
 import Entypo from "@expo/vector-icons/Entypo";
+import auth from "@react-native-firebase/auth";
 import { Spinner } from "@ui-kitten/components";
 import * as Font from "expo-font";
 import { router } from "expo-router";
@@ -13,6 +14,11 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  function onAuthStateChanged(user: any) {
+    setUser(user);
+  }
 
   useEffect(() => {
     async function prepare() {
@@ -33,6 +39,9 @@ export default function App() {
     }
 
     prepare();
+
+    return auth().onAuthStateChanged(onAuthStateChanged);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
@@ -43,6 +52,7 @@ export default function App() {
       // we hide the splash screen once we know the root view has already
       // performed layout.
       await SplashScreen.hideAsync();
+
       if (!user) {
         router.push("/auth/login");
       } else {
