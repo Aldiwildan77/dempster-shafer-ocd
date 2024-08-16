@@ -1,13 +1,14 @@
+import { SafeAreaView } from "@/components/SafeAreaView";
 import { EmailRegex } from "@/constants/Email";
 import { useUserStore } from "@/hooks/useUser";
 import { ReactNativeFirebase } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
-import { Button, Input, Spinner, Text } from "@ui-kitten/components";
+import { Button, Input, Spinner, Text, useTheme } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { Link, router } from "expo-router";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type LoginFormData = {
   email: string;
@@ -15,6 +16,7 @@ type LoginFormData = {
 };
 
 export default function LoginScreen() {
+  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -75,7 +77,7 @@ export default function LoginScreen() {
 
   return (
     <Fragment>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
         <Text category="h5" style={styles.title}>
           Welcome back.
         </Text>
@@ -161,7 +163,7 @@ export default function LoginScreen() {
         >
           <Text>Don't have an account?</Text>
           <Link href="/auth/register" asChild>
-            <Text style={{ color: "blue" }}>Register</Text>
+            <Text style={{ color: theme["color-primary-400"] }}>Register</Text>
           </Link>
         </View>
       </SafeAreaView>
@@ -170,13 +172,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    width: "100%",
-    gap: 8,
-    padding: 16,
-  },
   title: {
     textAlign: "center",
   },

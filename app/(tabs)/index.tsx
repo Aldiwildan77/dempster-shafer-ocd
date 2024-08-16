@@ -1,8 +1,15 @@
-import { Button, Card, Text, TopNavigation } from "@ui-kitten/components";
-import { Fragment } from "react";
+import { SafeAreaView } from "@/components/SafeAreaView";
+import {
+  Button,
+  Card,
+  Text,
+  TopNavigation,
+  useTheme,
+} from "@ui-kitten/components";
 import { StyleSheet, View } from "react-native";
 
 export default function IndexTabScreen() {
+  const theme = useTheme();
   const TakeTestHeader = () => {
     return (
       <View style={{ gap: 8 }}>
@@ -31,23 +38,28 @@ export default function IndexTabScreen() {
   };
 
   return (
-    <Fragment>
+    <SafeAreaView>
       <TopNavigation title="OCD Test" />
       <View style={styles.container}>
         <Card
           header={TakeTestHeader}
           footer={TakeTestFooter}
-          style={{ padding: 16 }}
+          style={{
+            padding: 16,
+            borderStyle: "dashed",
+            borderColor: theme["color-primary-default-border"],
+            borderWidth: 1,
+            borderRadius: 8,
+          }}
         ></Card>
       </View>
-    </Fragment>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     padding: 16,
   },
 });

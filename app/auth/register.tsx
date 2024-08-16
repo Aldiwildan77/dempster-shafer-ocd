@@ -1,13 +1,14 @@
+import { SafeAreaView } from "@/components/SafeAreaView";
 import { EmailRegex } from "@/constants/Email";
 import { useUserStore } from "@/hooks/useUser";
 import { ReactNativeFirebase } from "@react-native-firebase/app";
 import auth from "@react-native-firebase/auth";
-import { Button, Input, Spinner, Text } from "@ui-kitten/components";
+import { Button, Input, Spinner, Text, useTheme } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { Link, router } from "expo-router";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type RegisterFormData = {
   name: string;
@@ -17,6 +18,7 @@ type RegisterFormData = {
 };
 
 export default function RegisterScreen() {
+  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const {
     control,
@@ -44,17 +46,25 @@ export default function RegisterScreen() {
       );
 
       const user = authResponse.user;
-      user.displayName = data.name;
 
       console.log("User created: ", user);
 
-      await user.updateProfile({ ...user });
+      await user.updateProfile({
+        displayName: data.name,
+      });
 
-      setUser(user);
+      const registeredUser = auth().currentUser;
+
+      if (!registeredUser) {
+        throw new Error("Failed to get registered user");
+      }
+
+      setUser(registeredUser);
 
       router.push("/(tabs)/");
     } catch (error: any) {
       const firebaseError = error as ReactNativeFirebase.NativeFirebaseError;
+      console.error("[register] Failed to register: ", firebaseError);
 
       const errorMap = new Map<string, string>([
         ["auth/email-already-in-use", "Email is already in use"],
@@ -83,7 +93,7 @@ export default function RegisterScreen() {
 
   return (
     <Fragment>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView>
         <Text category="h5" style={styles.title}>
           Register
         </Text>
@@ -238,7 +248,7 @@ export default function RegisterScreen() {
         >
           <Text>Already have an account?</Text>
           <Link href="/auth/login" asChild>
-            <Text style={{ color: "blue" }}>Log in</Text>
+            <Text style={{ color: theme["color-primary-400"] }}>Log in</Text>
           </Link>
         </View>
       </SafeAreaView>
@@ -247,13 +257,6 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    width: "100%",
-    gap: 8,
-    padding: 16,
-  },
   title: {
     textAlign: "center",
   },

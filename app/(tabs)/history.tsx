@@ -1,3 +1,4 @@
+import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection } from "@/core/entity/answers";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
@@ -11,13 +12,7 @@ import {
 } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { useCallback, useEffect, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { FlatList, RefreshControl, ScrollView, StyleSheet } from "react-native";
 
 interface IListHistory {
   score: number;
@@ -93,7 +88,7 @@ export default function HistoryTabScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView>
       <TopNavigation title="History" />
       <ScrollView
         horizontal={false}
@@ -113,11 +108,6 @@ export default function HistoryTabScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 16,
-  },
   listContainer: {
     flex: 1,
     backgroundColor: "#fff",

@@ -1,38 +1,25 @@
+import { SafeAreaView } from "@/components/SafeAreaView";
+import { useDarkMode } from "@/context/DarkModeContext";
 import { useUserStore } from "@/hooks/useUser";
 import auth from "@react-native-firebase/auth";
 import {
+  Avatar,
   Icon,
-  IconElement,
-  IconProps,
-  MenuItem,
-  OverflowMenu,
   TopNavigation,
-  TopNavigationAction,
+  Text,
+  ListItem,
+  Toggle,
+  useTheme,
 } from "@ui-kitten/components";
 import { router } from "expo-router";
-import React, { Fragment } from "react";
-import { Text, View } from "react-native";
-
-const MenuIcon = (props: IconProps): IconElement => (
-  <Icon {...props} name="more-vertical" />
-);
-
-const InfoIcon = (props: IconProps): IconElement => (
-  <Icon {...props} name="info" />
-);
-
-const LogoutIcon = (props: IconProps): IconElement => (
-  <Icon {...props} name="log-out" />
-);
+import React from "react";
+import { View } from "react-native";
 
 export default function ProfileTabScreen() {
-  const [menuVisible, setMenuVisible] = React.useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const theme = useTheme();
   const resetUser = useUserStore((state) => state.reset);
-
-  // handlers
-  const toggleMenu = (): void => {
-    setMenuVisible(!menuVisible);
-  };
+  const user = useUserStore((state) => state.user);
 
   const handleLogout = async (): Promise<void> => {
     try {
@@ -45,34 +32,63 @@ export default function ProfileTabScreen() {
     }
   };
 
-  // renders
-  const renderMenuAction = (): React.ReactElement => (
-    <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
-  );
-
-  const renderRightActions = (): React.ReactElement => (
-    <>
-      <OverflowMenu
-        anchor={renderMenuAction}
-        visible={menuVisible}
-        onBackdropPress={toggleMenu}
-      >
-        <MenuItem accessoryLeft={InfoIcon} title="About" />
-        <MenuItem
-          accessoryLeft={LogoutIcon}
-          title="Logout"
-          onPress={handleLogout}
-        />
-      </OverflowMenu>
-    </>
-  );
-
   return (
-    <Fragment>
-      <TopNavigation title="Profile" accessoryRight={renderRightActions} />
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>Profile page</Text>
+    <SafeAreaView>
+      <TopNavigation title="Profile" />
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 4,
+        }}
+      >
+        <Avatar
+          size="giant"
+          source={require("../../assets/images/user-profile.png")}
+        />
+        {user?.displayName && <Text category="h6">{user?.displayName}</Text>}
+        <Text category="s1">{user?.email || ""}</Text>
+        <ListItem
+          style={{ marginTop: 32 }}
+          title={() => <Text category="s1">Dark Mode</Text>}
+          accessoryLeft={() => (
+            <Icon
+              style={{
+                width: 20,
+                height: 20,
+                marginRight: 8,
+                backgroundColor: "#",
+              }}
+              fill="#8F9BB3"
+              name="moon"
+            />
+          )}
+          accessoryRight={() => (
+            <Toggle checked={isDarkMode} onChange={toggleDarkMode} />
+          )}
+        />
+        <ListItem
+          onPress={handleLogout}
+          title={() => (
+            <Text category="s1" style={{ color: theme["text-warning-color"] }}>
+              Logout
+            </Text>
+          )}
+          accessoryLeft={() => (
+            <Icon
+              style={{
+                width: 20,
+                height: 20,
+                marginRight: 8,
+                backgroundColor: "#",
+              }}
+              fill="#8F9BB3"
+              name="log-out"
+            />
+          )}
+        />
       </View>
-    </Fragment>
+    </SafeAreaView>
   );
 }
