@@ -18,7 +18,7 @@ export function SafeAreaView({ children }: Props) {
         backgroundColor: isDarkMode
           ? theme["background-basic-color-1"]
           : "#fff",
-        paddingTop: 24,
+        paddingTop: 36,
         padding: 12,
         justifyContent: "center",
       }}
