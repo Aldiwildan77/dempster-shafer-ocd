@@ -1,3 +1,4 @@
+import { SafeAreaView } from "@/components/SafeAreaView";
 import { ConsultationPhone } from "@/constants/Consultation";
 import { Button, Text } from "@ui-kitten/components";
 import { toast } from "burnt";
@@ -21,74 +22,76 @@ export default function ResultScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.body}>
-        <View style={{ gap: 16 }}>
-          <Image
-            source={require("../../assets/images/result.png")}
-            style={{
-              width: 400,
-              height: 200,
-              marginHorizontal: "auto",
-            }}
-          />
-          <Text
-            category="h5"
-            style={{
-              textAlign: "center",
-            }}
-          >
-            Hasil Tes Kamu!
-          </Text>
-          <View style={{ gap: 4 }}>
-            <Text
-              category="h6"
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.body}>
+          <View style={{ gap: 16 }}>
+            <Image
+              source={require("../../assets/images/result.png")}
               style={{
-                textAlign: "center",
-                fontWeight: "800",
+                width: 400,
+                height: 200,
+                marginHorizontal: "auto",
               }}
-            >
-              Kamu berhasil mendapatkan score: hasil
-            </Text>
+            />
             <Text
+              category="h5"
               style={{
                 textAlign: "center",
               }}
             >
-              Evaluasi lebih lanjut mungkin diperlukan
+              Hasil Tes Kamu!
             </Text>
-            <Text
-              style={{
-                textAlign: "center",
-              }}
-            >
-              Lihat detailnya di bawah
-            </Text>
+            <View style={{ gap: 4 }}>
+              <Text
+                category="h6"
+                style={{
+                  textAlign: "center",
+                  fontWeight: "800",
+                }}
+              >
+                Kamu berhasil mendapatkan score: hasil
+              </Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                Evaluasi lebih lanjut mungkin diperlukan
+              </Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                Lihat detailnya di bawah
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.footer}>
-        <Button
-          onPress={() => {
-            if (router.canGoBack()) {
-              router.back();
-              return;
-            }
+        <View style={styles.footer}>
+          <Button
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+                return;
+              }
 
-            router.replace("/(tabs)/");
-          }}
-          style={{
-            width: "100%",
-          }}
-        >
-          Selesai
-        </Button>
-        {/* TODO: optional if indicate only then shown */}
-        <Button onPress={handleConsultation} appearance="ghost">
-          Konsultasi dengan Psikolog
-        </Button>
+              router.replace("/(tabs)/");
+            }}
+            style={{
+              width: "100%",
+            }}
+          >
+            Selesai
+          </Button>
+          {/* TODO: optional if indicate only then shown */}
+          <Button onPress={handleConsultation} appearance="ghost">
+            Konsultasi dengan Psikolog
+          </Button>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
