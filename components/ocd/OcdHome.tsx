@@ -1,24 +1,14 @@
 import { Button, Text } from "@ui-kitten/components";
-import { Image, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 type Props = {
   onStart: () => void;
 };
 
-export function OcdHome(props: Props) {
+export function OCDHomeScreen(props: Props) {
   return (
-    <View
-      style={{
-        height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <View
-        style={{
-          gap: 8,
-        }}
-      >
+    <View style={styles.container}>
+      <View style={styles.body}>
         <Image
           source={require("../../assets/images/trophy.png")}
           style={{
@@ -28,7 +18,7 @@ export function OcdHome(props: Props) {
           }}
         />
         <Text
-          category="h4"
+          category="h5"
           style={{
             textAlign: "center",
           }}
@@ -46,16 +36,33 @@ export function OcdHome(props: Props) {
           OCD
         </Text>
       </View>
-      <Button
-        onPress={props.onStart}
-        style={{
-          position: "absolute",
-          bottom: 20,
-          width: "100%",
-        }}
-      >
-        Mulai Sekarang
-      </Button>
+      <View style={styles.footer}>
+        <Button
+          onPress={props.onStart}
+          style={{
+            width: "100%",
+          }}
+        >
+          Mulai Sekarang
+        </Button>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  body: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  footer: {
+    width: "100%",
+  },
+});

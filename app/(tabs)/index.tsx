@@ -1,11 +1,11 @@
-import { OcdHome } from "@/components/ocd/OcdHome";
+import { OCDHomeScreen } from "@/components/ocd/OcdHome";
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { router } from "expo-router";
 
 export default function IndexTabScreen() {
   return (
     <SafeAreaView>
-      <OcdHome
+      <OCDHomeScreen
         onStart={() => {
           router.push("/ocd/test");
         }}
