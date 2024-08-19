@@ -11,6 +11,7 @@ import {
   TopNavigation,
 } from "@ui-kitten/components";
 import { toast } from "burnt";
+import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { FlatList, RefreshControl, ScrollView, StyleSheet } from "react-native";
 
@@ -65,11 +66,18 @@ export default function HistoryTabScreen() {
   }, []);
 
   const renderItemAccessory = (): React.ReactElement => (
-    <Button size="tiny">Check</Button>
+    <Button
+      size="tiny"
+      onPress={() => {
+        router.push("/ocd/result");
+      }}
+    >
+      Check
+    </Button>
   );
 
   const renderItemIcon = (props: IconProps): IconElement => (
-    <Icon {...props} name="person" />
+    <Icon {...props} name="calendar" />
   );
 
   const renderItem = ({
@@ -92,7 +100,6 @@ export default function HistoryTabScreen() {
       <TopNavigation title="History" />
       <ScrollView
         horizontal={false}
-        // TODO: i have concerns about this infinite scroll, need to check
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

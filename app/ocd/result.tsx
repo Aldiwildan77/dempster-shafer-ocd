@@ -70,6 +70,11 @@ export default function ResultScreen() {
       <View style={styles.footer}>
         <Button
           onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+              return;
+            }
+
             router.replace("/(tabs)/");
           }}
           style={{
