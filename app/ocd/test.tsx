@@ -1,4 +1,5 @@
 import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { LoadingIndicator } from "@/components/LoadingIndicator";
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { OCD_QUESTIONS } from "@/constants/OcdQuestion";
 import { AnswerCollection } from "@/core/entity/answers";
@@ -28,22 +29,28 @@ export default function TestScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<UserAnswerState>({});
   const isLastQuestion = currentIndex === OCD_QUESTIONS.length - 1;
-  const [exitModalVisible, setExitModalVisible] = useState(false);
+  const [isExitModalVisible, setIsExitModalVisible] = useState(false);
+  const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
 
   const user = useUserStore((state) => state.user);
   const createdAt = new Date();
 
   const handleExitConfirmation = () => {
-    setExitModalVisible(true);
+    setIsExitModalVisible(true);
     router.back();
   };
 
   const handleExitConfirmationCancel = () => {
-    setExitModalVisible(false);
+    setIsExitModalVisible(false);
   };
 
-  const submitAnswer = async () => {
+  const handleSaveConfirmation = async () => {
+    setIsSaveModalVisible(false);
+    setIsSubmitLoading(true);
+
     try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const response = await firestore()
         .collection(AnswerCollection)
         .add({
@@ -68,6 +75,11 @@ export default function TestScreen() {
     } catch (error) {
       console.error("Failed to submit answer: ", error);
     }
+    setIsSubmitLoading(false);
+  };
+
+  const handleSaveConfirmationCancel = () => {
+    setIsSaveModalVisible(false);
   };
 
   return (
@@ -76,7 +88,7 @@ export default function TestScreen() {
         <View style={styles.body}>
           <View style={styles.progressBarContainer}>
             <Icon
-              onPress={() => setExitModalVisible(true)}
+              onPress={() => setIsExitModalVisible(true)}
               style={{
                 width: 25,
                 height: 25,
@@ -143,8 +155,8 @@ export default function TestScreen() {
                   setCurrentIndex(currentIndex - 1);
                 }
               }}
-              style={{ flex: 1 }}
-              appearance="ghost"
+              style={{ flex: 1, borderRadius: 40 }}
+              appearance="outline"
             >
               Sebelumnya
             </Button>
@@ -156,10 +168,15 @@ export default function TestScreen() {
                 return;
               }
 
-              submitAnswer();
+              setIsSaveModalVisible(true);
             }}
-            style={{ flex: 1 }}
-            disabled={userAnswer[currentIndex] !== undefined ? false : true}
+            style={{ flex: 1, borderRadius: 40 }}
+            disabled={
+              userAnswer[currentIndex] === undefined || isSubmitLoading
+                ? true
+                : false
+            }
+            accessoryLeft={isSubmitLoading ? LoadingIndicator : undefined}
           >
             {isLastQuestion ? "Selesai" : "Selanjutnya"}
           </Button>
@@ -168,8 +185,14 @@ export default function TestScreen() {
       <ConfirmationModal
         onCancel={handleExitConfirmationCancel}
         onConfirm={handleExitConfirmation}
-        visible={exitModalVisible}
+        visible={isExitModalVisible}
         title="Apakah kamu yakin ingin keluar dari tes?"
+      />
+      <ConfirmationModal
+        onCancel={handleSaveConfirmationCancel}
+        onConfirm={handleSaveConfirmation}
+        visible={isSaveModalVisible}
+        title="Apakah kamu yakin ingin menyelesaikan tes?"
       />
     </SafeAreaView>
   );
@@ -198,11 +221,5 @@ const styles = StyleSheet.create({
   },
   answerContainer: {
     gap: 8,
-  },
-  selectedCard: {
-    backgroundColor: "#f0f0f0",
-  },
-  defaultCard: {
-    backgroundColor: "#fff",
   },
 });

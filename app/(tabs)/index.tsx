@@ -40,6 +40,7 @@ export default function IndexTabScreen() {
             onPress={() => router.push("/ocd/test")}
             style={{
               width: "100%",
+              borderRadius: 40,
             }}
           >
             Mulai Sekarang

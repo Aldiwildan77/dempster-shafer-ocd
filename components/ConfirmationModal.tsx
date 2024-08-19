@@ -20,10 +20,24 @@ export const ConfirmationModal = ({
         <View style={styles.container}>
           <Text>{title}</Text>
           <View style={styles.footer}>
-            <Button onPress={onConfirm} appearance="ghost" size="small">
+            <Button
+              onPress={onConfirm}
+              appearance="filled"
+              size="small"
+              style={{
+                borderRadius: 40,
+              }}
+            >
               Ya
             </Button>
-            <Button onPress={onCancel} appearance="ghost" size="small">
+            <Button
+              onPress={onCancel}
+              appearance="outline"
+              size="small"
+              style={{
+                borderRadius: 40,
+              }}
+            >
               Tidak
             </Button>
           </View>
