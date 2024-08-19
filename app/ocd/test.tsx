@@ -1,6 +1,10 @@
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { OCD_QUESTIONS } from "@/constants/OcdQuestion";
+import { AnswerCollection } from "@/core/entity/answers";
+import { OCDPredicate } from "@/core/entity/ocd";
+import { useUserStore } from "@/hooks/useUser";
+import firestore from "@react-native-firebase/firestore";
 import { Button, Card, Icon, ProgressBar, Text } from "@ui-kitten/components";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -18,6 +22,9 @@ export default function TestScreen() {
   const isLastQuestion = currentIndex === OCD_QUESTIONS.length - 1;
   const [exitModalVisible, setExitModalVisible] = useState(false);
 
+  const user = useUserStore((state) => state.user);
+  const createdAt = new Date();
+
   const handleExitConfirmation = () => {
     setExitModalVisible(true);
     router.back();
@@ -25,6 +32,34 @@ export default function TestScreen() {
 
   const handleExitConfirmationCancel = () => {
     setExitModalVisible(false);
+  };
+
+  const submitAnswer = async () => {
+    try {
+      const response = await firestore()
+        .collection(AnswerCollection)
+        .add({
+          created_at: createdAt,
+          finished_at: new Date(),
+          user_id: user?.uid,
+          // TODO: implement dempster shafer theory
+          predicate: "UNKNOWN" as OCDPredicate,
+          score: 0,
+        });
+
+      if (!response || !response.id) {
+        throw new Error("Failed to submit answer");
+      }
+
+      router.replace({
+        pathname: "/ocd/result/[id]",
+        params: {
+          id: response.id,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to submit answer: ", error);
+    }
   };
 
   return (
@@ -111,7 +146,7 @@ export default function TestScreen() {
                 return;
               }
 
-              router.replace("/ocd/result");
+              submitAnswer();
             }}
             style={{ flex: 1 }}
             disabled={userAnswer[currentIndex] !== undefined ? false : true}
