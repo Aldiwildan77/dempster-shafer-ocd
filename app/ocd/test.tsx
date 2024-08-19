@@ -5,7 +5,14 @@ import { AnswerCollection } from "@/core/entity/answers";
 import { OCDPredicate } from "@/core/entity/ocd";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
-import { Button, Card, Icon, ProgressBar, Text } from "@ui-kitten/components";
+import {
+  Button,
+  Card,
+  Icon,
+  ProgressBar,
+  Text,
+  useTheme,
+} from "@ui-kitten/components";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
@@ -17,6 +24,7 @@ type UserAnswerState = {
 type UserAnswerIndex = number;
 
 export default function TestScreen() {
+  const theme = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<UserAnswerState>({});
   const isLastQuestion = currentIndex === OCD_QUESTIONS.length - 1;
@@ -100,7 +108,9 @@ export default function TestScreen() {
                 }}
                 style={{
                   backgroundColor:
-                    userAnswer[currentIndex] === index ? "#f0f0f0" : "#fff",
+                    userAnswer[currentIndex] === index
+                      ? theme["background-basic-color-3"]
+                      : theme["background-basic-color-1"],
                   borderRadius: 8,
                 }}
               >

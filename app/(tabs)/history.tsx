@@ -3,7 +3,7 @@ import { AnswerCollection } from "@/core/entity/answers";
 import { Histories, History } from "@/core/entity/history";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
-import { Button, Text, TopNavigation } from "@ui-kitten/components";
+import { Button, Text, TopNavigation, useTheme } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 export default function HistoryTabScreen() {
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [history, setHistory] = useState<Histories>([]);
@@ -76,6 +77,9 @@ export default function HistoryTabScreen() {
         justifyContent: "space-between",
         flexDirection: "row",
         padding: 16,
+        borderWidth: 1,
+        borderRadius: 8,
+        marginVertical: 4,
       }}
     >
       {/* <Icon name="calendar" /> */}
@@ -115,7 +119,10 @@ export default function HistoryTabScreen() {
         }
       >
         <FlatList
-          style={styles.listContainer}
+          style={{
+            ...styles.listContainer,
+            backgroundColor: theme["background-basic-color-1"],
+          }}
           data={history}
           renderItem={renderItem}
         />
@@ -127,6 +134,5 @@ export default function HistoryTabScreen() {
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
-    backgroundColor: "#fff",
   },
 });
