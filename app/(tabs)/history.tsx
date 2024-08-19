@@ -1,5 +1,6 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection } from "@/core/entity/answers";
+import { Histories, History } from "@/core/entity/history";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
 import { Button, Text, TopNavigation } from "@ui-kitten/components";
@@ -15,18 +16,10 @@ import {
   View,
 } from "react-native";
 
-interface IListHistory {
-  doc_id: string;
-  score: number;
-  predicate: string;
-  created_at: Date;
-  finished_at: Date;
-}
-
 export default function HistoryTabScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [history, setHistory] = useState<IListHistory[]>([]);
+  const [history, setHistory] = useState<Histories>([]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -75,7 +68,7 @@ export default function HistoryTabScreen() {
     item,
     index,
   }: {
-    item: IListHistory;
+    item: History;
     index: number;
   }): React.ReactElement => (
     <View
