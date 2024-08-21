@@ -1,12 +1,11 @@
 import { useUserStore } from "@/hooks/useUser";
 import Entypo from "@expo/vector-icons/Entypo";
 import auth from "@react-native-firebase/auth";
-import { Spinner } from "@ui-kitten/components";
 import * as Font from "expo-font";
 import { router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -30,7 +29,7 @@ export default function App() {
           : "Paper";
         console.log(`Using ${uiManager}`);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 4 * 1000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -54,9 +53,9 @@ export default function App() {
       await SplashScreen.hideAsync();
 
       if (!user) {
-        router.push("/auth/login");
+        router.replace("/auth/login");
       } else {
-        router.push("/(tabs)/");
+        router.replace("/(tabs)/");
       }
     }
   }, [appIsReady, user]);
@@ -70,7 +69,10 @@ export default function App() {
       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
       onLayout={onLayoutRootView}
     >
-      <Spinner />
+      <Image
+        source={require("@/assets/images/icon.png")}
+        style={{ width: 128, height: 128 }}
+      />
     </View>
   );
 }

@@ -1,15 +1,18 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection } from "@/core/entity/answers";
+import { PredicateAlias } from "@/core/entity/dempster-shafer";
 import { Histories, History } from "@/core/entity/history";
 import { useUserStore } from "@/hooks/useUser";
+import { precision } from "@/utils/number";
 import firestore from "@react-native-firebase/firestore";
-import { Button, Text, TopNavigation, useTheme } from "@ui-kitten/components";
+import { Text, TopNavigation, useTheme } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -45,8 +48,8 @@ export default function HistoryTabScreen() {
           doc_id: doc.id,
           score: docData.score,
           predicate: docData.predicate,
-          created_at: docData.created_at.toDate(),
-          finished_at: docData.finished_at.toDate(),
+          created_at: docData.created_at?.toDate(),
+          finished_at: docData.finished_at?.toDate(),
         };
       });
 
@@ -72,37 +75,51 @@ export default function HistoryTabScreen() {
     item: History;
     index: number;
   }): React.ReactElement => (
-    <View
-      style={{
-        justifyContent: "space-between",
-        flexDirection: "row",
-        padding: 16,
-        borderWidth: 1,
-        borderRadius: 8,
-        marginVertical: 4,
-      }}
+    <Pressable
+      onPress={() =>
+        router.push({
+          pathname: "/ocd/result/[id]",
+          params: {
+            id: item.doc_id,
+          },
+        })
+      }
+      style={({ pressed }) => [
+        {
+          backgroundColor: pressed
+            ? theme["background-basic-color-3"]
+            : theme["background-basic-color-1"],
+          flex: 1,
+          paddingHorizontal: 8,
+        },
+      ]}
     >
-      {/* <Icon name="calendar" /> */}
-      <View style={{ justifyContent: "flex-start", flexDirection: "column" }}>
-        <Text>Your OCD Test Result</Text>
-        <Text>{`${item.score} - ${item.predicate}`}</Text>
-      </View>
-      <View style={{ justifyContent: "center", flexDirection: "column" }}>
-        <Button
-          size="tiny"
-          onPress={() => {
-            router.push({
-              pathname: "/ocd/result/[id]",
-              params: {
-                id: item.doc_id,
-              },
-            });
+      <View
+        style={{
+          justifyContent: "space-between",
+          flexDirection: "row",
+          paddingVertical: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: theme["border-basic-color-4"],
+        }}
+      >
+        <View
+          style={{
+            justifyContent: "flex-start",
+            flexDirection: "column",
+            gap: 2,
           }}
         >
-          Check
-        </Button>
+          <Text category="h6">
+            Tingkat OCD: {PredicateAlias[item.predicate]}
+          </Text>
+          <Text>Skor anda: {precision(item.score)}</Text>
+          <Text category="c1">
+            Dilakukan pada: {item.created_at.toLocaleString()}
+          </Text>
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 
   if (loading) {

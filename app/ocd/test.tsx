@@ -1,9 +1,14 @@
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
 import { SafeAreaView } from "@/components/SafeAreaView";
-import { OCD_QUESTIONS } from "@/constants/OcdQuestion";
-import { AnswerCollection } from "@/core/entity/answers";
-import { OCDPredicate } from "@/core/entity/ocd";
+import { AnswerCollection, UserAnswer } from "@/core/entity/answers";
+import { OCD_QUESTIONS, OCDAnswer } from "@/core/entity/dempster-shafer";
+import {
+  calculateBeliefMass,
+  calculateFinalBeliefMass,
+  getPredicate,
+  getScore,
+} from "@/core/module/dampster-shafer";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
 import {
@@ -16,25 +21,30 @@ import {
 } from "@ui-kitten/components";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 type UserAnswerState = {
-  [questionIndex: number]: UserAnswerIndex;
+  [index: number]: UserAnswer;
 };
-
-type UserAnswerIndex = number;
 
 export default function TestScreen() {
   const theme = useTheme();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userAnswer, setUserAnswer] = useState<UserAnswerState>({});
-  const isLastQuestion = currentIndex === OCD_QUESTIONS.length - 1;
   const [isExitModalVisible, setIsExitModalVisible] = useState(false);
   const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [createdAt] = useState(new Date());
+
+  const isLastQuestion = currentIndex === OCD_QUESTIONS.length - 1;
 
   const user = useUserStore((state) => state.user);
-  const createdAt = new Date();
+
+  const convertUserAnswerStateToUserAnswers = (
+    userAnswerState: UserAnswerState
+  ) => {
+    return Object.values(userAnswerState);
+  };
 
   const handleExitConfirmation = () => {
     setIsExitModalVisible(true);
@@ -45,21 +55,31 @@ export default function TestScreen() {
     setIsExitModalVisible(false);
   };
 
+  const handleSaveConfirmationCancel = () => {
+    setIsSaveModalVisible(false);
+  };
+
   const handleSaveConfirmation = async () => {
     setIsSaveModalVisible(false);
     setIsSubmitLoading(true);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const answersConverted = convertUserAnswerStateToUserAnswers(userAnswer);
+      const initialMass = calculateBeliefMass(answersConverted);
+      const mass = calculateFinalBeliefMass(initialMass);
+
+      const finishedAt = new Date();
+
       const response = await firestore()
         .collection(AnswerCollection)
         .add({
           created_at: createdAt,
-          finished_at: new Date(),
+          finished_at: finishedAt,
           user_id: user?.uid,
-          // TODO: implement dempster shafer theory
-          predicate: "UNKNOWN" as OCDPredicate,
-          score: 0,
+          predicate: getPredicate(mass),
+          score: getScore(mass) * 100,
         });
 
       if (!response || !response.id) {
@@ -76,10 +96,6 @@ export default function TestScreen() {
       console.error("Failed to submit answer: ", error);
     }
     setIsSubmitLoading(false);
-  };
-
-  const handleSaveConfirmationCancel = () => {
-    setIsSaveModalVisible(false);
   };
 
   return (
@@ -109,42 +125,39 @@ export default function TestScreen() {
             {OCD_QUESTIONS[currentIndex].question}
           </Text>
           <View style={styles.answerContainer}>
-            {OCD_QUESTIONS[currentIndex].answers.map((answer, index) => (
-              <Card
-                key={index}
-                onPress={() => {
-                  setUserAnswer({
-                    ...userAnswer,
-                    [currentIndex]: index,
-                  });
-                }}
-                style={{
-                  backgroundColor:
-                    userAnswer[currentIndex] === index
-                      ? theme["background-basic-color-3"]
-                      : theme["background-basic-color-1"],
-                  borderRadius: 8,
-                }}
-              >
-                <View
+            {OCD_QUESTIONS[currentIndex].answers?.map(
+              (answer: OCDAnswer, index: number) => (
+                <Card
+                  key={index}
+                  onPress={() => {
+                    setUserAnswer({
+                      ...userAnswer,
+                      [currentIndex]: {
+                        serial: OCD_QUESTIONS[currentIndex].question_serial,
+                        point: answer.point,
+                      },
+                    });
+                  }}
                   style={{
-                    gap: 8,
-                    justifyContent: "center",
-                    alignItems: "center",
+                    backgroundColor:
+                      userAnswer[currentIndex]?.point === answer.point
+                        ? theme["background-basic-color-3"]
+                        : theme["background-basic-color-1"],
+                    borderRadius: 8,
                   }}
                 >
-                  <Image
-                    src={answer.imageUrl}
+                  <View
                     style={{
-                      width: 200,
-                      height: 200,
-                      marginHorizontal: "auto",
+                      gap: 8,
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
-                  />
-                  <Text style={{ textAlign: "center" }}>{answer.answer}</Text>
-                </View>
-              </Card>
-            ))}
+                  >
+                    <Text style={{ textAlign: "center" }}>{answer.answer}</Text>
+                  </View>
+                </Card>
+              )
+            )}
           </View>
         </View>
         <View style={styles.footer}>

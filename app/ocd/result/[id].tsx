@@ -1,8 +1,14 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { ConsultationPhone } from "@/constants/Consultation";
-import { Answer, AnswerCollection } from "@/core/entity/answers";
+import { AnswerCollection, UserAnswerResult } from "@/core/entity/answers";
+import {
+  OCDPredicatePossibilities,
+  PredicateAlias,
+} from "@/core/entity/dempster-shafer";
+import { precision } from "@/utils/number";
+import { diffTime } from "@/utils/time";
 import firestore from "@react-native-firebase/firestore";
-import { Button, Text } from "@ui-kitten/components";
+import { Button, Card, Text } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -12,7 +18,7 @@ export default function ResultScreen() {
   const local = useLocalSearchParams();
   const { id } = local;
 
-  const [result, setResult] = useState<Answer>();
+  const [result, setResult] = useState<UserAnswerResult>();
 
   const handleConsultation = useCallback(async () => {
     const uri = `https://wa.me/${ConsultationPhone}`;
@@ -45,8 +51,8 @@ export default function ResultScreen() {
 
       console.log("Result data: ", data);
       setResult({
-        created_at: data.created_at.toDate(),
-        finished_at: data.finished_at.toDate(),
+        created_at: data.created_at?.toDate(),
+        finished_at: data.finished_at?.toDate(),
         predicate: data.predicate,
         score: data.score,
         user_id: data.user_id,
@@ -57,11 +63,27 @@ export default function ResultScreen() {
     }
   };
 
+  const isPossibleOCD = OCDPredicatePossibilities.includes(
+    result?.predicate || "UNKNOWN"
+  );
+
+  const scorePrecision = precision(result?.score || 0);
+
   // Effects
   useEffect(() => {
     fetchResult();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!result) {
+    return (
+      <SafeAreaView>
+        <View style={styles.container}>
+          <Text>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView>
@@ -86,28 +108,44 @@ export default function ResultScreen() {
             </Text>
             <View style={{ gap: 4 }}>
               <Text
-                category="h6"
-                style={{
-                  textAlign: "center",
-                  fontWeight: "800",
-                }}
-              >
-                Kamu berhasil mendapatkan score: {result?.score!}
-              </Text>
-              <Text
                 style={{
                   textAlign: "center",
                 }}
               >
-                Evaluasi lebih lanjut mungkin diperlukan
+                Kamu mendapatkan skor {precision(result.score)}%
               </Text>
-              <Text
+            </View>
+            <View
+              style={{
+                gap: 16,
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Card
                 style={{
-                  textAlign: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Lihat detailnya di bawah
-              </Text>
+                <Text>{isNaN(scorePrecision) ? 0 : scorePrecision}%</Text>
+              </Card>
+              <Card
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>{PredicateAlias[result.predicate]}</Text>
+              </Card>
+              <Card
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>{diffTime(result.created_at, result.finished_at)}</Text>
+              </Card>
             </View>
           </View>
         </View>
@@ -127,10 +165,11 @@ export default function ResultScreen() {
           >
             Selesai
           </Button>
-          {/* TODO: optional if indicate only then shown */}
-          <Button onPress={handleConsultation} appearance="ghost">
-            Konsultasi dengan Psikolog
-          </Button>
+          {isPossibleOCD && (
+            <Button onPress={handleConsultation} appearance="ghost">
+              Konsultasi dengan Psikolog
+            </Button>
+          )}
         </View>
       </View>
     </SafeAreaView>
