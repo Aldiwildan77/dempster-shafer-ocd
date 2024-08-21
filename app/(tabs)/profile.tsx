@@ -5,10 +5,10 @@ import auth from "@react-native-firebase/auth";
 import {
   Avatar,
   Icon,
-  TopNavigation,
-  Text,
   ListItem,
+  Text,
   Toggle,
+  TopNavigation,
   useTheme,
 } from "@ui-kitten/components";
 import { router } from "expo-router";

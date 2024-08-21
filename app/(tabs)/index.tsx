@@ -16,24 +16,26 @@ export default function IndexTabScreen() {
               marginHorizontal: "auto",
             }}
           />
-          <Text
-            category="h5"
-            style={{
-              textAlign: "center",
-            }}
-          >
-            Buktikan Bahwa Kamu Bebas OCD
-          </Text>
-          <Text
-            category="h6"
-            style={{
-              textAlign: "center",
-              fontWeight: "normal",
-            }}
-          >
-            Ikuti tes sederhana ini untuk mengetahui apakah kamu memiliki gejala
-            OCD
-          </Text>
+          <View style={{ gap: 8 }}>
+            <Text
+              category="h5"
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Buktikan Bahwa Kamu Bebas OCD
+            </Text>
+            <Text
+              category="h6"
+              style={{
+                textAlign: "center",
+                fontWeight: "normal",
+              }}
+            >
+              Ikuti tes sederhana ini untuk mengetahui apakah kamu memiliki
+              gejala OCD
+            </Text>
+          </View>
         </View>
         <View style={styles.footer}>
           <Button
@@ -42,6 +44,7 @@ export default function IndexTabScreen() {
               width: "100%",
               borderRadius: 8,
             }}
+            status="success"
           >
             Mulai Sekarang
           </Button>
