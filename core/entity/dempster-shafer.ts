@@ -204,7 +204,7 @@ export type OCDPredicate = "UNKNOWN" | "MILD" | "MODERATE" | "SEVERE";
 export const OCDPredicatePossibilities: OCDPredicate[] = ["MODERATE", "SEVERE"];
 
 export const PredicateAlias: Record<OCDPredicate, string> = {
-  UNKNOWN: "Tidak diketahui",
+  UNKNOWN: "?",
   MILD: "Ringan",
   MODERATE: "Sedang",
   SEVERE: "Tinggi",

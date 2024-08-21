@@ -112,7 +112,7 @@ export default function ResultScreen() {
                   textAlign: "center",
                 }}
               >
-                Kamu mendapatkan hasil sebagai berikut:
+                Kamu mendapatkan diagnosa sebagai berikut:
               </Text>
             </View>
             <View
@@ -126,25 +126,35 @@ export default function ResultScreen() {
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
+                  padding: 8,
                 }}
+                header={() => <Text>Skor</Text>}
               >
-                <Text>{isNaN(scorePrecision) ? 0 : scorePrecision}%</Text>
+                <Text category="h6">
+                  {isNaN(scorePrecision) ? 0 : scorePrecision}%
+                </Text>
               </Card>
               <Card
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
+                  padding: 8,
                 }}
+                header={() => <Text>Tingkat</Text>}
               >
-                <Text>{PredicateAlias[result.predicate]}</Text>
+                <Text category="h6">{PredicateAlias[result.predicate]}</Text>
               </Card>
               <Card
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
+                  padding: 8,
                 }}
+                header={() => <Text>Durasi</Text>}
               >
-                <Text>{diffTime(result.created_at, result.finished_at)}</Text>
+                <Text category="h6">
+                  {diffTime(result.created_at, result.finished_at)}
+                </Text>
               </Card>
             </View>
           </View>
