@@ -1,7 +1,7 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
+import { Button, Text } from "@ui-kitten/components";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
-import { Button, Text } from "@ui-kitten/components";
 
 export default function IndexTabScreen() {
   return (
@@ -40,7 +40,7 @@ export default function IndexTabScreen() {
             onPress={() => router.push("/ocd/test")}
             style={{
               width: "100%",
-              borderRadius: 40,
+              borderRadius: 8,
             }}
           >
             Mulai Sekarang

@@ -24,9 +24,7 @@ export const ConfirmationModal = ({
               onPress={onConfirm}
               appearance="filled"
               size="small"
-              style={{
-                borderRadius: 40,
-              }}
+              style={{ borderRadius: 8 }}
             >
               Ya
             </Button>
@@ -34,9 +32,7 @@ export const ConfirmationModal = ({
               onPress={onCancel}
               appearance="outline"
               size="small"
-              style={{
-                borderRadius: 40,
-              }}
+              style={{ borderRadius: 8 }}
             >
               Tidak
             </Button>

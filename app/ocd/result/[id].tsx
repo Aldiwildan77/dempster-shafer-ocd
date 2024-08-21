@@ -112,7 +112,7 @@ export default function ResultScreen() {
                   textAlign: "center",
                 }}
               >
-                Kamu mendapatkan skor {precision(result.score)}%
+                Kamu mendapatkan hasil sebagai berikut:
               </Text>
             </View>
             <View
@@ -161,12 +161,17 @@ export default function ResultScreen() {
             }}
             style={{
               width: "100%",
+              borderRadius: 8,
             }}
           >
             Selesai
           </Button>
           {isPossibleOCD && (
-            <Button onPress={handleConsultation} appearance="ghost">
+            <Button
+              onPress={handleConsultation}
+              appearance="ghost"
+              style={{ borderRadius: 8 }}
+            >
               Konsultasi dengan Psikolog
             </Button>
           )}

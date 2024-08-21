@@ -123,7 +123,15 @@ export default function HistoryTabScreen() {
   );
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <SafeAreaView>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaView>
+    );
   }
 
   return (

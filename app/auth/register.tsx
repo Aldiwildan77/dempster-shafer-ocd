@@ -234,7 +234,11 @@ export default function RegisterScreen() {
                 )}
               />
             </View>
-            <Button onPress={handleSubmit(onSubmit)} disabled={isLoading}>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              disabled={isLoading}
+              style={{ borderRadius: 8 }}
+            >
               {isLoading ? <Spinner /> : "Register"}
             </Button>
           </View>

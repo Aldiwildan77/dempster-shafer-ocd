@@ -80,6 +80,7 @@ export default function TestScreen() {
           user_id: user?.uid,
           predicate: getPredicate(mass),
           score: getScore(mass) * 100,
+          answers: answersConverted,
         });
 
       if (!response || !response.id) {
@@ -121,9 +122,7 @@ export default function TestScreen() {
             />
           </View>
 
-          <Text style={{ textAlign: "justify" }}>
-            {OCD_QUESTIONS[currentIndex].question}
-          </Text>
+          <Text category="h6">{OCD_QUESTIONS[currentIndex].question}</Text>
           <View style={styles.answerContainer}>
             {OCD_QUESTIONS[currentIndex].answers?.map(
               (answer: OCDAnswer, index: number) => (
@@ -168,7 +167,7 @@ export default function TestScreen() {
                   setCurrentIndex(currentIndex - 1);
                 }
               }}
-              style={{ flex: 1, borderRadius: 40 }}
+              style={{ flex: 1, borderRadius: 8 }}
               appearance="outline"
             >
               Sebelumnya
@@ -183,7 +182,7 @@ export default function TestScreen() {
 
               setIsSaveModalVisible(true);
             }}
-            style={{ flex: 1, borderRadius: 40 }}
+            style={{ flex: 1, borderRadius: 8 }}
             disabled={
               userAnswer[currentIndex] === undefined || isSubmitLoading
                 ? true
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    gap: 16,
+    gap: 32,
   },
   footer: {
     width: "100%",
