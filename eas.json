@@ -21,7 +21,11 @@
         "GOOGLE_SERVICES_PLIST": "@GOOGLE_SERVICES_PLIST"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "image": "latest"
+      },
+      "ios": {
+        "image": "latest"
       }
     }
   }
