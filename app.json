@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "dempster-shafer-ocd",
-    "slug": "dempster-shafer-ocd",
+    "name": "mindcare",
+    "slug": "mindcare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "deshocd",
+    "scheme": "mindcare",
     "platforms": [
       "ios",
       "android",
