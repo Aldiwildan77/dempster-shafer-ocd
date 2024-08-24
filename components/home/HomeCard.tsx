@@ -35,7 +35,7 @@ export const HomeCard = ({
             style={{
               color: "white",
               alignSelf: "flex-start",
-              width: "50%",
+              width: "60%",
               textAlign: "justify",
             }}
           >
