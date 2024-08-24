@@ -1,9 +1,11 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Button, Text } from "@ui-kitten/components";
 import { router } from "expo-router";
 import { Image, StyleSheet, View } from "react-native";
 
 export default function IndexTestScreen() {
+  const { debounce } = useDebounce();
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -39,7 +41,7 @@ export default function IndexTestScreen() {
         </View>
         <View style={styles.footer}>
           <Button
-            onPress={() => router.push("/ocd/test")}
+            onPress={() => debounce(() => router.push("/ocd/test"))}
             style={{
               width: "100%",
               borderRadius: 8,
@@ -48,7 +50,7 @@ export default function IndexTestScreen() {
             Mulai Sekarang
           </Button>
           <Button
-            onPress={() => router.replace("/(tabs)/")}
+            onPress={() => debounce(() => router.replace("/(tabs)/"))}
             appearance="ghost"
             style={{
               width: "100%",

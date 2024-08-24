@@ -1,10 +1,11 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection } from "@/core/entity/answers";
 import { Histories, History } from "@/core/entity/history";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useUserStore } from "@/hooks/useUser";
 import { precision } from "@/utils/number";
 import firestore from "@react-native-firebase/firestore";
-import { Text, TopNavigation, useTheme } from "@ui-kitten/components";
+import { Divider, Text, TopNavigation, useTheme } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -13,7 +14,6 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
@@ -23,6 +23,10 @@ export default function HistoryTabScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [history, setHistory] = useState<Histories>([]);
+  const [limit] = useState(10);
+  const [lastVisible, setLastVisible] = useState<History | null>(null);
+
+  const { debounce } = useDebounce();
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -39,6 +43,7 @@ export default function HistoryTabScreen() {
         .collection(AnswerCollection)
         .where("user_id", "==", user?.uid)
         .orderBy("created_at", "desc")
+        .limit(limit)
         .get();
 
       const data = snapshot.docs.map((doc) => {
@@ -52,6 +57,10 @@ export default function HistoryTabScreen() {
         };
       });
 
+      if (data.length > 0) {
+        setLastVisible(data[data.length - 1]);
+      }
+
       setHistory(data);
     } catch (error) {
       console.error(error);
@@ -59,6 +68,42 @@ export default function HistoryTabScreen() {
     } finally {
       setRefreshing(false);
       setLoading(false);
+    }
+  };
+
+  const fetchMoreHistory = async () => {
+    if (!lastVisible) {
+      return;
+    }
+
+    try {
+      const snapshot = await firestore()
+        .collection(AnswerCollection)
+        .where("user_id", "==", user?.uid)
+        .orderBy("created_at", "desc")
+        .startAfter(lastVisible.created_at)
+        .limit(limit)
+        .get();
+
+      const data = snapshot.docs.map((doc) => {
+        const docData = doc.data();
+        return {
+          doc_id: doc.id,
+          score: docData.score,
+          predicate: docData.predicate,
+          created_at: docData.created_at?.toDate(),
+          finished_at: docData.finished_at?.toDate(),
+        };
+      });
+
+      if (data.length > 0) {
+        setLastVisible(data[data.length - 1]);
+      }
+
+      setHistory([...history, ...data]);
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Failed to fetch history", preset: "error" });
     }
   };
 
@@ -76,12 +121,14 @@ export default function HistoryTabScreen() {
   }): React.ReactElement => (
     <Pressable
       onPress={() =>
-        router.push({
-          pathname: "/ocd/result/[id]",
-          params: {
-            id: item.doc_id,
-          },
-        })
+        debounce(() =>
+          router.push({
+            pathname: "/ocd/result/[id]",
+            params: {
+              id: item.doc_id,
+            },
+          })
+        )
       }
       style={({ pressed }) => [
         {
@@ -89,7 +136,6 @@ export default function HistoryTabScreen() {
             ? theme["background-basic-color-3"]
             : theme["background-basic-color-1"],
           flex: 1,
-          paddingHorizontal: 8,
         },
       ]}
     >
@@ -121,6 +167,20 @@ export default function HistoryTabScreen() {
     </Pressable>
   );
 
+  const renderEmpty = () => (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 16,
+        paddingTop: 16,
+      }}
+    >
+      <Text category="s1">Belum ada riwayat</Text>
+    </View>
+  );
+
   if (loading) {
     return (
       <SafeAreaView>
@@ -135,22 +195,24 @@ export default function HistoryTabScreen() {
 
   return (
     <SafeAreaView>
-      <TopNavigation title="History" />
-      <ScrollView
-        horizontal={false}
+      <TopNavigation title="History" style={{ paddingHorizontal: 16 }} />
+      <Divider />
+      <FlatList
+        style={{
+          ...styles.listContainer,
+          backgroundColor: theme["background-basic-color-1"],
+        }}
+        data={history}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.doc_id}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
-        <FlatList
-          style={{
-            ...styles.listContainer,
-            backgroundColor: theme["background-basic-color-1"],
-          }}
-          data={history}
-          renderItem={renderItem}
-        />
-      </ScrollView>
+        ListEmptyComponent={renderEmpty}
+        onEndReached={fetchMoreHistory}
+        onEndReachedThreshold={0.5}
+        refreshing={refreshing}
+      />
     </SafeAreaView>
   );
 }
@@ -158,5 +220,6 @@ export default function HistoryTabScreen() {
 const styles = StyleSheet.create({
   listContainer: {
     flex: 1,
+    paddingHorizontal: 16,
   },
 });

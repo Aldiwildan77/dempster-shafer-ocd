@@ -4,6 +4,7 @@ import { useUserStore } from "@/hooks/useUser";
 import auth from "@react-native-firebase/auth";
 import {
   Avatar,
+  Divider,
   Icon,
   ListItem,
   Text,
@@ -34,60 +35,71 @@ export default function ProfileTabScreen() {
 
   return (
     <SafeAreaView>
-      <TopNavigation title="Profile" />
+      <TopNavigation title="Profile" style={{ paddingHorizontal: 16 }} />
+      <Divider />
       <View
         style={{
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
           gap: 4,
+          paddingHorizontal: 16,
         }}
       >
         <Avatar
           size="giant"
-          source={require("../../assets/images/user-profile.png")}
+          source={require("@/assets/images/user-profile.png")}
         />
         {user?.displayName && <Text category="h6">{user?.displayName}</Text>}
         <Text category="s1">{user?.email || ""}</Text>
-        <ListItem
-          style={{ marginTop: 32 }}
-          title={() => <Text category="s1">Dark Mode</Text>}
-          accessoryLeft={() => (
-            <Icon
-              style={{
-                width: 20,
-                height: 20,
-                marginRight: 8,
-                backgroundColor: "#",
-              }}
-              fill="#8F9BB3"
-              name="moon"
-            />
-          )}
-          accessoryRight={() => (
-            <Toggle checked={isDarkMode} onChange={toggleDarkMode} />
-          )}
-        />
-        <ListItem
-          onPress={handleLogout}
-          title={() => (
-            <Text category="s1" style={{ color: theme["text-warning-color"] }}>
-              Logout
-            </Text>
-          )}
-          accessoryLeft={() => (
-            <Icon
-              style={{
-                width: 20,
-                height: 20,
-                marginRight: 8,
-                backgroundColor: "#",
-              }}
-              fill="#8F9BB3"
-              name="log-out"
-            />
-          )}
-        />
+        <View
+          style={{
+            width: "100%",
+            flexWrap: "wrap",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <ListItem
+            style={{ marginTop: 32 }}
+            title={() => <Text category="s1">Dark Mode</Text>}
+            accessoryLeft={() => (
+              <Icon
+                style={{
+                  width: 20,
+                  height: 20,
+                  marginRight: 8,
+                  backgroundColor: "#",
+                }}
+                fill="#8F9BB3"
+                name="moon"
+              />
+            )}
+            accessoryRight={() => (
+              <Toggle checked={isDarkMode} onChange={toggleDarkMode} />
+            )}
+          />
+          <ListItem
+            onPress={handleLogout}
+            title={() => (
+              <Text category="s1" style={{ color: theme["text-danger-color"] }}>
+                Logout
+              </Text>
+            )}
+            accessoryLeft={() => (
+              <Icon
+                style={{
+                  width: 20,
+                  height: 20,
+                  marginRight: 8,
+                  backgroundColor: "#",
+                }}
+                fill="#8F9BB3"
+                name="log-out"
+              />
+            )}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
