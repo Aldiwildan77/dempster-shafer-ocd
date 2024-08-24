@@ -19,6 +19,7 @@ import {
   Text,
   useTheme,
 } from "@ui-kitten/components";
+import { toast } from "burnt";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -106,8 +107,13 @@ export default function TestScreen() {
       });
     } catch (error) {
       console.error("Failed to submit answer: ", error);
+      toast({
+        title: "Gagal menyimpan jawaban",
+        preset: "error",
+      });
+    } finally {
+      setIsSubmitLoading(false);
     }
-    setIsSubmitLoading(false);
   };
 
   return (

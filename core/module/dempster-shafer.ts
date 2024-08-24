@@ -42,6 +42,11 @@ export function combineHypothesis(
     console.log("evidence", evidence);
     const rules = selectedRules.filter((rule) => rule.evidence === evidence);
     console.log("rules", rules);
+
+    if (rules.length === 0) {
+      return;
+    }
+
     const hypothesisMap = rules.map((rule) => {
       return {
         hypothesis: rule.hypothesis,
