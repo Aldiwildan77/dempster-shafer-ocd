@@ -8,7 +8,7 @@ import { toast } from "burnt";
 import { Link, router } from "expo-router";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 type RegisterFormData = {
   name: string;
@@ -94,166 +94,169 @@ export default function RegisterScreen() {
   return (
     <Fragment>
       <SafeAreaView>
-        <Text category="h5" style={styles.title}>
-          Register
-        </Text>
-        <View style={{ padding: 8, gap: 8 }}>
-          <View style={{ gap: 16 }}>
-            <View style={{ gap: 8 }}>
-              <Controller
-                control={control}
-                name="name"
-                rules={{ required: "Name is required" }}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Name"
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      value={value}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.name && (
-                      <Text style={styles.input_error}>
-                        {errors.name?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-              />
-              <Controller
-                control={control}
-                name="email"
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: EmailRegex,
-                    message: "Invalid email address",
-                  },
-                }}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Email"
-                      keyboardType="email-address"
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      value={value}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.email && (
-                      <Text style={styles.input_error}>
-                        {errors.email?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-              />
-              <Controller
-                control={control}
-                name="password"
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "Password must be at most 20 characters",
-                  },
-                }}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Password"
-                      secureTextEntry
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      value={value}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.password && (
-                      <Text style={styles.input_error}>
-                        {errors.password?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-              />
-              <Controller
-                control={control}
-                name="confirmPassword"
-                rules={{
-                  required: "Confirm Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                  maxLength: {
-                    value: 20,
-                    message: "Password must be at most 20 characters",
-                  },
-                  onChange: (value) => value,
-                  validate: (value) =>
-                    value === getValues("password") ||
-                    "Passwords did not match",
-                }}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Confirm Password"
-                      secureTextEntry
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      value={value}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.confirmPassword && (
-                      <Text style={styles.input_error}>
-                        {errors.confirmPassword?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-              />
+        <View style={{ padding: 8 }}>
+          <Image source={require("@/assets/images/icon.png")} />
+          <Text category="h5" style={styles.title}>
+            Register
+          </Text>
+          <View style={{ padding: 8, gap: 8 }}>
+            <View style={{ gap: 16 }}>
+              <View style={{ gap: 8 }}>
+                <Controller
+                  control={control}
+                  name="name"
+                  rules={{ required: "Name is required" }}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Name"
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.name && (
+                        <Text style={styles.input_error}>
+                          {errors.name?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{
+                    required: "Email is required",
+                    pattern: {
+                      value: EmailRegex,
+                      message: "Invalid email address",
+                    },
+                  }}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Email"
+                        keyboardType="email-address"
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.email && (
+                        <Text style={styles.input_error}>
+                          {errors.email?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="password"
+                  rules={{
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Password must be at most 20 characters",
+                    },
+                  }}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Password"
+                        secureTextEntry
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.password && (
+                        <Text style={styles.input_error}>
+                          {errors.password?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="confirmPassword"
+                  rules={{
+                    required: "Confirm Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                    maxLength: {
+                      value: 20,
+                      message: "Password must be at most 20 characters",
+                    },
+                    onChange: (value) => value,
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "Passwords did not match",
+                  }}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Confirm Password"
+                        secureTextEntry
+                        onChangeText={onChange}
+                        onBlur={onBlur}
+                        value={value}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.confirmPassword && (
+                        <Text style={styles.input_error}>
+                          {errors.confirmPassword?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                />
+              </View>
+              <Button
+                onPress={handleSubmit(onSubmit)}
+                disabled={isLoading}
+                style={{ borderRadius: 8 }}
+              >
+                {isLoading ? <Spinner /> : "Register"}
+              </Button>
             </View>
-            <Button
-              onPress={handleSubmit(onSubmit)}
-              disabled={isLoading}
-              style={{ borderRadius: 8 }}
-            >
-              {isLoading ? <Spinner /> : "Register"}
-            </Button>
           </View>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 4,
-          }}
-        >
-          <Text>Already have an account?</Text>
-          <Link href="/auth/login" asChild>
-            <Text style={{ color: theme["color-primary-400"] }}>Log in</Text>
-          </Link>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 4,
+            }}
+          >
+            <Text>Already have an account?</Text>
+            <Link href="/auth/login" asChild>
+              <Text style={{ color: theme["color-primary-400"] }}>Log in</Text>
+            </Link>
+          </View>
         </View>
       </SafeAreaView>
     </Fragment>

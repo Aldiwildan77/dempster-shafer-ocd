@@ -66,7 +66,12 @@ export default function App() {
 
   return (
     <View
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
       onLayout={onLayoutRootView}
     >
       <Image

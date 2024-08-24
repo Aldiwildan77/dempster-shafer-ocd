@@ -8,7 +8,7 @@ import { toast } from "burnt";
 import { Link, router } from "expo-router";
 import { Fragment, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 type LoginFormData = {
   email: string;
@@ -78,97 +78,102 @@ export default function LoginScreen() {
   return (
     <Fragment>
       <SafeAreaView>
-        <Text category="h5" style={styles.title}>
-          Welcome back.
-        </Text>
-        <View style={{ padding: 8, gap: 8 }}>
-          <View style={{ gap: 16 }}>
-            <View style={{ gap: 8 }}>
-              <Controller
-                control={control}
-                name="email"
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Email"
-                      keyboardType="email-address"
-                      value={value}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.email && (
-                      <Text style={styles.input_error}>
-                        {errors.email?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: EmailRegex,
-                    message: "Invalid email address",
-                  },
-                }}
-              />
-              <Controller
-                control={control}
-                name="password"
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState,
-                }) => (
-                  <Fragment>
-                    <Input
-                      placeholder="Password"
-                      secureTextEntry
-                      value={value}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      size="large"
-                      status={fieldState.invalid ? "danger" : "basic"}
-                    />
-                    {errors.password && (
-                      <Text style={styles.input_error}>
-                        {errors.password?.message}
-                      </Text>
-                    )}
-                  </Fragment>
-                )}
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                }}
-              />
+        <View style={{ padding: 16 }}>
+          <Image source={require("@/assets/images/icon.png")} />
+          <Text category="h5" style={styles.title}>
+            Welcome back.
+          </Text>
+          <View style={{ padding: 8, gap: 8 }}>
+            <View style={{ gap: 16 }}>
+              <View style={{ gap: 8 }}>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Email"
+                        keyboardType="email-address"
+                        value={value}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.email && (
+                        <Text style={styles.input_error}>
+                          {errors.email?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                  rules={{
+                    required: "Email is required",
+                    pattern: {
+                      value: EmailRegex,
+                      message: "Invalid email address",
+                    },
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState,
+                  }) => (
+                    <Fragment>
+                      <Input
+                        placeholder="Password"
+                        secureTextEntry
+                        value={value}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        size="large"
+                        status={fieldState.invalid ? "danger" : "basic"}
+                      />
+                      {errors.password && (
+                        <Text style={styles.input_error}>
+                          {errors.password?.message}
+                        </Text>
+                      )}
+                    </Fragment>
+                  )}
+                  rules={{
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                  }}
+                />
+              </View>
+              <Button
+                onPress={handleSubmit(onSubmit)}
+                disabled={isLoading}
+                style={{ borderRadius: 8 }}
+              >
+                {isLoading ? <Spinner /> : "Login"}
+              </Button>
             </View>
-            <Button
-              onPress={handleSubmit(onSubmit)}
-              disabled={isLoading}
-              style={{ borderRadius: 8 }}
-            >
-              {isLoading ? <Spinner /> : "Login"}
-            </Button>
           </View>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            gap: 4,
-          }}
-        >
-          <Text>Don't have an account?</Text>
-          <Link href="/auth/register" asChild>
-            <Text style={{ color: theme["color-primary-400"] }}>Register</Text>
-          </Link>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: 4,
+            }}
+          >
+            <Text>Don't have an account?</Text>
+            <Link href="/auth/register" asChild>
+              <Text style={{ color: theme["color-primary-400"] }}>
+                Register
+              </Text>
+            </Link>
+          </View>
         </View>
       </SafeAreaView>
     </Fragment>
