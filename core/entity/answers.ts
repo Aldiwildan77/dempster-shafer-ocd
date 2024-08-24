@@ -1,4 +1,4 @@
-import { OCDPredicate } from "./dempster-shafer";
+import { Hypothesis } from "./dempster-shafer";
 
 export const AnswerCollection = "answers";
 
@@ -6,7 +6,7 @@ export type UserAnswerResult = {
   created_at: Date;
   finished_at: Date;
   user_id: string;
-  predicate: OCDPredicate;
+  predicate: Hypothesis | string | null;
   score: number;
 };
 

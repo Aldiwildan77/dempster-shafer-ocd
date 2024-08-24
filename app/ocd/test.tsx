@@ -4,11 +4,11 @@ import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection, UserAnswer } from "@/core/entity/answers";
 import { OCD_QUESTIONS, OCDAnswer } from "@/core/entity/dempster-shafer";
 import {
-  calculateBeliefMass,
-  calculateFinalBeliefMass,
-  getPredicate,
-  getScore,
-} from "@/core/module/dampster-shafer";
+  combineEvidenceAndHypothesis,
+  combineHypothesis,
+  getCalculableHypothesisOfRules,
+  selectEvidenceByRules,
+} from "@/core/module/dempster-shafer";
 import { useUserStore } from "@/hooks/useUser";
 import firestore from "@react-native-firebase/firestore";
 import {
@@ -42,7 +42,7 @@ export default function TestScreen() {
 
   const convertUserAnswerStateToUserAnswers = (
     userAnswerState: UserAnswerState
-  ) => {
+  ): UserAnswer[] => {
     return Object.values(userAnswerState);
   };
 
@@ -67,21 +67,32 @@ export default function TestScreen() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const answersConverted = convertUserAnswerStateToUserAnswers(userAnswer);
-      const initialMass = calculateBeliefMass(answersConverted);
-      const mass = calculateFinalBeliefMass(initialMass);
+      const selectedEvidence = answersConverted
+        .filter((answer) => answer.point === 1)
+        .map((answer) => answer.serial);
+
+      const selectedRules = getCalculableHypothesisOfRules(
+        selectEvidenceByRules(selectedEvidence)
+      );
+
+      const combinedHypothesisResult = combineHypothesis(
+        selectedEvidence,
+        selectedRules
+      );
+
+      const result = combineEvidenceAndHypothesis(combinedHypothesisResult);
 
       const finishedAt = new Date();
+      const score = result.max === -1 ? 0 : result.max * 100;
 
-      const response = await firestore()
-        .collection(AnswerCollection)
-        .add({
-          created_at: createdAt,
-          finished_at: finishedAt,
-          user_id: user?.uid,
-          predicate: getPredicate(mass),
-          score: getScore(mass) * 100,
-          answers: answersConverted,
-        });
+      const response = await firestore().collection(AnswerCollection).add({
+        created_at: createdAt,
+        finished_at: finishedAt,
+        user_id: user?.uid,
+        predicate: result.hypothesis,
+        score: score,
+        answers: answersConverted,
+      });
 
       if (!response || !response.id) {
         throw new Error("Failed to submit answer");
@@ -169,6 +180,7 @@ export default function TestScreen() {
               }}
               style={{ flex: 1, borderRadius: 8 }}
               appearance="outline"
+              disabled={isSubmitLoading ? true : false}
             >
               Sebelumnya
             </Button>

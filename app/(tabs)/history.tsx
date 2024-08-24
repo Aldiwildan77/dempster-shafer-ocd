@@ -1,6 +1,5 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { AnswerCollection } from "@/core/entity/answers";
-import { PredicateAlias } from "@/core/entity/dempster-shafer";
 import { Histories, History } from "@/core/entity/history";
 import { useUserStore } from "@/hooks/useUser";
 import { precision } from "@/utils/number";
@@ -111,9 +110,9 @@ export default function HistoryTabScreen() {
           }}
         >
           <Text category="h6">
-            Tingkat OCD: {PredicateAlias[item.predicate]}
+            Jumlah Predikat OCD: {item.predicate?.split(",").length || 0}
           </Text>
-          <Text>Skor anda: {precision(item.score)}</Text>
+          <Text>Skor anda: {precision(item.score)}%</Text>
           <Text category="c1">
             Dilakukan pada: {item.created_at.toLocaleString()}
           </Text>

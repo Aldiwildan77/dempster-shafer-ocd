@@ -61,7 +61,7 @@ export default function RegisterScreen() {
 
       setUser(registeredUser);
 
-      router.push("/(tabs)/");
+      router.replace("/(tabs)/");
     } catch (error: any) {
       const firebaseError = error as ReactNativeFirebase.NativeFirebaseError;
       console.error("[register] Failed to register: ", firebaseError);

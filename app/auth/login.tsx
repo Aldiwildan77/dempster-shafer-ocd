@@ -44,7 +44,7 @@ export default function LoginScreen() {
       console.log("User signed in: ", user);
       setUser(user);
 
-      router.push("/(tabs)/");
+      router.replace("/(tabs)/");
     } catch (error: any) {
       const firebaseError = error as ReactNativeFirebase.NativeFirebaseError;
 

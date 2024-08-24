@@ -1,17 +1,13 @@
 import { SafeAreaView } from "@/components/SafeAreaView";
 import { ConsultationPhone } from "@/constants/Consultation";
 import { AnswerCollection, UserAnswerResult } from "@/core/entity/answers";
-import {
-  OCDPredicatePossibilities,
-  PredicateAlias,
-} from "@/core/entity/dempster-shafer";
 import { precision } from "@/utils/number";
 import { diffTime } from "@/utils/time";
 import firestore from "@react-native-firebase/firestore";
 import { Button, Card, Text } from "@ui-kitten/components";
 import { toast } from "burnt";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Linking, StyleSheet, View } from "react-native";
 
 export default function ResultScreen() {
@@ -20,19 +16,19 @@ export default function ResultScreen() {
 
   const [result, setResult] = useState<UserAnswerResult>();
 
-  const handleConsultation = useCallback(async () => {
-    const uri = `https://wa.me/${ConsultationPhone}`;
-    const supported = await Linking.canOpenURL(uri);
-    if (!supported) {
-      toast({
-        title: "Gagal membuka WhatsApp",
-        preset: "error",
+  const handleConsultation = () => {
+    Linking.openURL(`whatsapp://send?phone=${ConsultationPhone}`)
+      .then(() => {
+        console.log("WhatsApp opened");
+      })
+      .catch((error) => {
+        console.error("Failed to open WhatsApp: ", error);
+        toast({
+          title: "Gagal membuka WhatsApp",
+          preset: "error",
+        });
       });
-      return;
-    }
-
-    await Linking.openURL(`https://wa.me/${ConsultationPhone}`);
-  }, []);
+  };
 
   const fetchResult = async () => {
     try {
@@ -62,10 +58,6 @@ export default function ResultScreen() {
       router.replace("/(tabs)/");
     }
   };
-
-  const isPossibleOCD = OCDPredicatePossibilities.includes(
-    result?.predicate || "UNKNOWN"
-  );
 
   const scorePrecision = precision(result?.score || 0);
 
@@ -118,19 +110,21 @@ export default function ResultScreen() {
             <View
               style={{
                 gap: 16,
-                flexDirection: "row",
-                justifyContent: "center",
+                flexDirection: "row", // Arrange items in a row (3x1 grid)
+                justifyContent: "space-between", // Distribute space between cards
+                marginHorizontal: 16,
               }}
             >
               <Card
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  padding: 8,
+                  paddingTop: 4,
+                  flex: 1, // Distribute space equally
                 }}
                 header={() => <Text>Skor</Text>}
               >
-                <Text category="h6">
+                <Text category="s1" style={{ fontWeight: "bold" }}>
                   {isNaN(scorePrecision) ? 0 : scorePrecision}%
                 </Text>
               </Card>
@@ -138,21 +132,37 @@ export default function ResultScreen() {
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  padding: 8,
+                  paddingTop: 4,
+                  flex: 1.2, // Distribute space equally
                 }}
-                header={() => <Text>Tingkat</Text>}
+                header={() => <Text>Category</Text>}
               >
-                <Text category="h6">{PredicateAlias[result.predicate]}</Text>
+                {result.predicate !== null &&
+                  result.predicate.split(",").map((predicate) => (
+                    <Text
+                      key={predicate}
+                      category="s1"
+                      style={{ fontWeight: "bold" }}
+                    >
+                      {predicate}
+                    </Text>
+                  ))}
+                {result.predicate === null && (
+                  <Text category="s1" style={{ fontWeight: "bold" }}>
+                    Normal
+                  </Text>
+                )}
               </Card>
               <Card
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  padding: 8,
+                  paddingTop: 4,
+                  flex: 1, // Distribute space equally
                 }}
                 header={() => <Text>Durasi</Text>}
               >
-                <Text category="h6">
+                <Text category="s1" style={{ fontWeight: "bold" }}>
                   {diffTime(result.created_at, result.finished_at)}
                 </Text>
               </Card>
@@ -161,14 +171,7 @@ export default function ResultScreen() {
         </View>
         <View style={styles.footer}>
           <Button
-            onPress={() => {
-              if (router.canGoBack()) {
-                router.back();
-                return;
-              }
-
-              router.replace("/(tabs)/");
-            }}
+            onPress={() => router.replace("/(tabs)/")}
             style={{
               width: "100%",
               borderRadius: 8,
@@ -176,7 +179,7 @@ export default function ResultScreen() {
           >
             Selesai
           </Button>
-          {isPossibleOCD && (
+          {result.predicate !== null && (
             <Button
               onPress={handleConsultation}
               appearance="ghost"

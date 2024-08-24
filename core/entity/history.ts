@@ -1,9 +1,9 @@
-import { OCDPredicate } from "./dempster-shafer";
+import { Hypothesis } from "./dempster-shafer";
 
 export type History = {
   doc_id: string;
   score: number;
-  predicate: OCDPredicate;
+  predicate: Hypothesis | string | null;
   created_at: Date;
   finished_at: Date;
 };
