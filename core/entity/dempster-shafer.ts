@@ -1,213 +1,172 @@
-export type Symptom = {
+export type Hypothesis = "Washing" | "Checking" | "Counting";
+
+export interface Evidence {
   code: string;
   description: string;
-  washingWeight: number;
-  checkingWeight: number;
-  countingWeight: number;
-};
+}
 
-export type OCDRelation = {
-  code: string;
-  washing: boolean;
-  checking: boolean;
-  counting: boolean;
-};
+export interface Rule {
+  hypothesis: Hypothesis;
+  evidence: string; // Mengacu pada code dari evidence
+  value: number;
+}
 
-export type BeliefMass = {
-  washing: number;
-  checking: number;
-  counting: number;
-};
-
-export type Mass = {
-  belief: number;
-  conflict: number;
-};
-
-export const OCDRelations: OCDRelation[] = [
-  { code: "G01", washing: true, checking: true, counting: true },
-  { code: "G02", washing: true, checking: true, counting: true },
-  { code: "G03", washing: true, checking: true, counting: true },
-  { code: "G04", washing: true, checking: true, counting: true },
-  { code: "G05", washing: true, checking: true, counting: true },
-  { code: "G06", washing: true, checking: true, counting: true },
-  { code: "G07", washing: true, checking: true, counting: true },
-  { code: "G08", washing: true, checking: true, counting: true },
-  { code: "G09", washing: true, checking: true, counting: true },
-  { code: "G10", washing: true, checking: true, counting: true },
-  { code: "G11", washing: false, checking: false, counting: false },
-  { code: "G12", washing: false, checking: true, counting: true },
-  { code: "G13", washing: true, checking: true, counting: false },
-  { code: "G14", washing: true, checking: false, counting: false },
-  { code: "G15", washing: false, checking: true, counting: false },
-  { code: "G16", washing: false, checking: true, counting: false },
-  { code: "G17", washing: false, checking: true, counting: false },
-  { code: "G18", washing: true, checking: false, counting: false },
-  { code: "G19", washing: false, checking: true, counting: false },
-  { code: "G20", washing: false, checking: true, counting: false },
-];
-
-export const symptoms: Symptom[] = [
+export const evidences: Evidence[] = [
   {
     code: "G01",
     description:
       "Muncul dorongan untuk melakukan suatu kegiatan berulang-ulang",
-    washingWeight: 0.8,
-    checkingWeight: 0.8,
-    countingWeight: 0.8,
   },
-  {
-    code: "G02",
-    description: "Terganggunya rutinitas normal",
-    washingWeight: 0.8,
-    checkingWeight: 0.8,
-    countingWeight: 0.8,
-  },
-  {
-    code: "G03",
-    description: "Memburuknya hubungan sosial",
-    washingWeight: 0.7,
-    checkingWeight: 0.7,
-    countingWeight: 0.7,
-  },
+  { code: "G02", description: "Terganggunya rutinitas normal" },
+  { code: "G03", description: "Memburuknya hubungan sosial" },
   {
     code: "G04",
     description:
       "Munculnya dorongan, kekhawatiran, dan bayangan-bayangan yang terus mengganggu yang menyebabkan kegelisahan",
-    washingWeight: 0.8,
-    checkingWeight: 0.8,
-    countingWeight: 0.8,
   },
   {
     code: "G05",
     description:
-      "Kecemasan yang muncul berasal dari dalam diri, bukan pengaruh dari luar",
-    washingWeight: 0.8,
-    checkingWeight: 0.8,
-    countingWeight: 0.8,
+      "Kecemasan yang muncul berasal dari dalam diri, bukan pengaruh luar",
   },
   {
     code: "G06",
     description: "Tidak sedang berada di bawah pengaruh obat-obatan",
-    washingWeight: 0.7,
-    checkingWeight: 0.6,
-    countingWeight: 0.7,
   },
   {
     code: "G07",
     description:
       "Berusaha menekan atau menghilangkan gangguan kecemasan dengan melakukan kegiatan berulang",
-    washingWeight: 0.8,
-    checkingWeight: 0.8,
-    countingWeight: 0.8,
   },
   {
     code: "G08",
     description:
-      "Perbuatan berulang yang dilakukan bukan untuk memperoleh kepuasan, tetapi hanya untuk mengurangi penderitaan akibat rasa cemas yang terus muncul",
-    washingWeight: 0.7,
-    checkingWeight: 0.7,
-    countingWeight: 0.7,
+      "Perbuatan berulang yang dilakukan bukan untuk memperoleh kepuasan, tetapi hanya untuk mengurangi penderitaan akibat cemas",
   },
   {
     code: "G09",
     description:
       "Menghabiskan waktu lebih dari satu jam untuk melakukan hal yang berulang",
-    washingWeight: 0.8,
-    checkingWeight: 0.7,
-    countingWeight: 0.6,
   },
   {
     code: "G10",
     description:
-      "Berusaha menghindari tempat-tempat yang memicu munculnya obsesi",
-    washingWeight: 0.8,
-    checkingWeight: 0.6,
-    countingWeight: 0.6,
+      "Berusaha menghindari tempat yang memicu munculnya obsesi (misal menghindari berjabat tangan atau ke toilet umum)",
   },
   {
     code: "G11",
-    description: "Muncul dorongan agresif yang mengerikan",
-    washingWeight: 0.4,
-    checkingWeight: 0.3,
-    countingWeight: 0.2,
+    description:
+      "Muncul dorongan agresif yang mengerikan (misal melukai anak-anak atau berteriak di tempat ibadah)",
   },
   {
     code: "G12",
     description:
-      "Muncul kebutuhan untuk memastikan segala benda dalam kondisi khusus",
-    washingWeight: 0.3,
-    checkingWeight: 0.6,
-    countingWeight: 0.8,
+      "Muncul kebutuhan untuk memastikan segala benda dalam kondisi khusus (misal susunan benda mesti simetris, berjumlah genap/ganjil)",
   },
   {
     code: "G13",
     description: "Meyakini bahwa dirinya terkontaminasi oleh orang lain",
-    washingWeight: 0.8,
-    checkingWeight: 0.5,
-    countingWeight: 0.4,
   },
-  {
-    code: "G14",
-    description: "Terus menerus mencuci tangan",
-    washingWeight: 0.8,
-    checkingWeight: 0.3,
-    countingWeight: 0.2,
-  },
-  {
-    code: "G15",
-    description: "Terus-menerus mengecek kompor atau tabung gas",
-    washingWeight: 0.2,
-    checkingWeight: 0.8,
-    countingWeight: 0.3,
-  },
-  {
-    code: "G16",
-    description: "Terus-menerus mengecek kunci pintu",
-    washingWeight: 0.3,
-    checkingWeight: 0.8,
-    countingWeight: 0.4,
-  },
-  {
-    code: "G17",
-    description: "Mengecek suatu pekerjaan secara berulang",
-    washingWeight: 0.4,
-    checkingWeight: 0.8,
-    countingWeight: 0.4,
-  },
+  { code: "G14", description: "Terus menerus mencuci tangan" },
+  { code: "G15", description: "Terus menerus mengecek kompor atau tabung gas" },
+  { code: "G16", description: "Terus menerus mengecek kunci pintu" },
+  { code: "G17", description: "Mengecek suatu pekerjaan secara berulang" },
   {
     code: "G18",
     description:
       "Berpikir bahwa tangannya tetap kotor meski dicuci berkali-kali",
-    washingWeight: 0.8,
-    checkingWeight: 0.3,
-    countingWeight: 0.3,
   },
-  {
-    code: "G19",
-    description: "Ragu apakah pintu rumah ditinggalan terbuka",
-    washingWeight: 0.2,
-    checkingWeight: 0.8,
-    countingWeight: 0.4,
-  },
-  {
-    code: "G20",
-    description: "Ragu telah mematikan kompor",
-    washingWeight: 0.2,
-    checkingWeight: 0.8,
-    countingWeight: 0.2,
-  },
+  { code: "G19", description: "Ragu apakah pintu rumah ditinggal terbuka" },
+  { code: "G20", description: "Ragu telah mematikan kompor" },
 ];
 
-export type OCDPredicate = "UNKNOWN" | "MILD" | "MODERATE" | "SEVERE";
+export const rules: Rule[] = [
+  { hypothesis: "Washing", evidence: "G01", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G01", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G01", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G02", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G02", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G02", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G03", value: 0.7 },
+  { hypothesis: "Checking", evidence: "G03", value: 0.7 },
+  { hypothesis: "Counting", evidence: "G03", value: 0.7 },
+  { hypothesis: "Washing", evidence: "G04", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G04", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G04", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G05", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G05", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G05", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G06", value: 0.7 },
+  { hypothesis: "Checking", evidence: "G06", value: 0.6 },
+  { hypothesis: "Counting", evidence: "G06", value: 0.7 },
+  { hypothesis: "Washing", evidence: "G07", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G07", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G07", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G08", value: 0.7 },
+  { hypothesis: "Checking", evidence: "G08", value: 0.7 },
+  { hypothesis: "Counting", evidence: "G08", value: 0.7 },
+  { hypothesis: "Washing", evidence: "G09", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G09", value: 0.7 },
+  { hypothesis: "Counting", evidence: "G09", value: 0.6 },
+  { hypothesis: "Washing", evidence: "G10", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G10", value: 0.6 },
+  { hypothesis: "Counting", evidence: "G10", value: 0.6 },
+  { hypothesis: "Washing", evidence: "G11", value: 0.4 },
+  { hypothesis: "Checking", evidence: "G11", value: 0.3 },
+  { hypothesis: "Counting", evidence: "G11", value: 0.2 },
+  { hypothesis: "Washing", evidence: "G12", value: 0.3 },
+  { hypothesis: "Checking", evidence: "G12", value: 0.6 },
+  { hypothesis: "Counting", evidence: "G12", value: 0.8 },
+  { hypothesis: "Washing", evidence: "G13", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G13", value: 0.5 },
+  { hypothesis: "Counting", evidence: "G13", value: 0.4 },
+  { hypothesis: "Washing", evidence: "G14", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G14", value: 0.3 },
+  { hypothesis: "Counting", evidence: "G14", value: 0.2 },
+  { hypothesis: "Washing", evidence: "G15", value: 0.2 },
+  { hypothesis: "Checking", evidence: "G15", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G15", value: 0.3 },
+  { hypothesis: "Washing", evidence: "G16", value: 0.3 },
+  { hypothesis: "Checking", evidence: "G16", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G16", value: 0.4 },
+  { hypothesis: "Washing", evidence: "G17", value: 0.4 },
+  { hypothesis: "Checking", evidence: "G17", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G17", value: 0.4 },
+  { hypothesis: "Washing", evidence: "G18", value: 0.8 },
+  { hypothesis: "Checking", evidence: "G18", value: 0.3 },
+  { hypothesis: "Counting", evidence: "G18", value: 0.3 },
+  { hypothesis: "Washing", evidence: "G19", value: 0.2 },
+  { hypothesis: "Checking", evidence: "G19", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G19", value: 0.4 },
+  { hypothesis: "Washing", evidence: "G20", value: 0.2 },
+  { hypothesis: "Checking", evidence: "G20", value: 0.8 },
+  { hypothesis: "Counting", evidence: "G20", value: 0.2 },
+];
 
-export const OCDPredicatePossibilities: OCDPredicate[] = ["MODERATE", "SEVERE"];
-
-export const PredicateAlias: Record<OCDPredicate, string> = {
-  UNKNOWN: "?",
-  MILD: "Ringan",
-  MODERATE: "Sedang",
-  SEVERE: "Tinggi",
+export const knowledgeRelations: Record<
+  string,
+  ("Washing" | "Checking" | "Counting")[]
+> = {
+  G01: ["Washing", "Checking", "Counting"],
+  G02: ["Washing", "Checking", "Counting"],
+  G03: ["Washing", "Checking", "Counting"],
+  G04: ["Washing", "Checking", "Counting"],
+  G05: ["Washing", "Checking", "Counting"],
+  G06: ["Washing", "Checking", "Counting"],
+  G07: ["Washing", "Checking", "Counting"],
+  G08: ["Washing", "Checking", "Counting"],
+  G09: ["Washing", "Checking", "Counting"],
+  G10: ["Washing", "Checking", "Counting"],
+  G11: [],
+  G12: ["Checking", "Counting"],
+  G13: ["Washing", "Checking"],
+  G14: ["Washing"],
+  G15: ["Checking"],
+  G16: ["Checking"],
+  G17: ["Checking"],
+  G18: ["Washing"],
+  G19: ["Checking"],
+  G20: ["Checking"],
 };
 
 export type OCDQuestion = {
